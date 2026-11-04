@@ -1,0 +1,17 @@
+<VirtualHost 10.50.5.20:443>
+    ServerName __LAB_DOMAIN__
+    DocumentRoot /var/www/wordpress
+
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/__LAB_DOMAIN__/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/__LAB_DOMAIN__/privkey.pem
+
+    <Directory /var/www/wordpress>
+        Options FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/lab5-https-error.log
+    CustomLog ${APACHE_LOG_DIR}/lab5-https-access.log combined
+</VirtualHost>

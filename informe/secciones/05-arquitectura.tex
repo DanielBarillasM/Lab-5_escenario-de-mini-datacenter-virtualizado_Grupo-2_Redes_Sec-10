@@ -1,0 +1,33 @@
+\section{Arquitectura y direccionamiento}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\linewidth}{l l l Y}
+    \toprule
+    \textbf{Nodo} & \textbf{Sistema} & \textbf{IP interna} & \textbf{Función} \\
+    \midrule
+    \texttt{pve-lab5} & Proxmox VE & 10.50.5.1 & Hipervisor y administración de VM \\
+    \texttt{lab5-cliente} & openSUSE Leap & 10.50.5.10 & Navegador, SSH, FileZilla y resolución local \\
+    \texttt{lab5-web} & Ubuntu Server & 10.50.5.20 & Apache, PHP, WordPress y cliente MySQL \\
+    \texttt{lab5-db} & Ubuntu Server & 10.50.5.30 & MySQL y base \texttt{wordpress} \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Direccionamiento propuesto para la red interna.}
+\end{table}
+
+La red \texttt{10.50.5.0/24} permanece pendiente de validación contra la red física. Proxmox utilizará \texttt{vmbr1} como puente interno. Cada VM podrá disponer de una segunda interfaz para actualizaciones, pero solo una interfaz tendrá ruta predeterminada.
+
+\begin{center}
+\fbox{\parbox{0.9\linewidth}{\centering
+\textbf{openSUSE 10.50.5.10}\\
+\vspace{0.3em}
+$\downarrow$ HTTPS 443 y SSH/SFTP 22222\\
+\vspace{0.3em}
+\textbf{WordPress 10.50.5.20}\\
+\vspace{0.3em}
+$\downarrow$ MySQL 13306\\
+\vspace{0.3em}
+\textbf{MySQL 10.50.5.30}}}
+\end{center}
+
+\pendiente{Confirmar nombres de interfaces, subred y rutas después de crear las VM.}

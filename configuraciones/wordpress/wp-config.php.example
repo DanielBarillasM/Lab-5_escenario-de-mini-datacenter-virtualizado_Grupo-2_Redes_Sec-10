@@ -1,0 +1,28 @@
+<?php
+/** Plantilla sanitizada. Nunca confirmar la contraseña o las salts reales. */
+
+define('DB_NAME', 'wordpress');
+define('DB_USER', 'wpapp');
+define('DB_PASSWORD', '__REPLACE_WITH_DB_PASSWORD__');
+define('DB_HOST', '10.50.5.30:13306');
+define('DB_CHARSET', 'utf8mb4');
+define('DB_COLLATE', '');
+
+define('AUTH_KEY',         '__GENERATE_UNIQUE_VALUE__');
+define('SECURE_AUTH_KEY',  '__GENERATE_UNIQUE_VALUE__');
+define('LOGGED_IN_KEY',    '__GENERATE_UNIQUE_VALUE__');
+define('NONCE_KEY',        '__GENERATE_UNIQUE_VALUE__');
+define('AUTH_SALT',        '__GENERATE_UNIQUE_VALUE__');
+define('SECURE_AUTH_SALT', '__GENERATE_UNIQUE_VALUE__');
+define('LOGGED_IN_SALT',   '__GENERATE_UNIQUE_VALUE__');
+define('NONCE_SALT',       '__GENERATE_UNIQUE_VALUE__');
+
+$table_prefix = 'wp_';
+define('WP_DEBUG', false);
+define('DISALLOW_FILE_EDIT', true);
+
+if (!defined('ABSPATH')) {
+    define('ABSPATH', __DIR__ . '/');
+}
+
+require_once ABSPATH . 'wp-settings.php';

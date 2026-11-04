@@ -1,0 +1,13 @@
+# Sustituir los nombres de interfaz después de ejecutar: ip -br link
+network:
+  version: 2
+  ethernets:
+    __UPLINK_INTERFACE__:
+      dhcp4: true
+      dhcp6: false
+    __LAB_INTERFACE__:
+      dhcp4: false
+      dhcp6: false
+      addresses:
+        - 10.50.5.30/24
+      optional: true

@@ -1,0 +1,18 @@
+\section{Objetivos}
+
+\subsection{Objetivo general}
+
+Implementar y administrar remotamente un servicio WordPress en dos capas, identificando el rol de cada componente, su comunicación y los controles de acceso que protegen la solución.
+
+\subsection{Objetivos específicos}
+
+\begin{itemize}
+  \item Instalar dos servidores Ubuntu Server 26.04 LTS sin entorno gráfico.
+  \item Separar Apache, PHP y WordPress del servidor MySQL.
+  \item Administrar ambos servidores por SSH desde una VM openSUSE con interfaz gráfica.
+  \item Aplicar permisos con \texttt{chown} y \texttt{chmod} para limitar la escritura en WordPress.
+  \item Probar SFTP con FileZilla y un usuario administrador específico.
+  \item Configurar UFW con reglas limitadas por servicio y origen.
+  \item Publicar el sitio por HTTPS con un certificado de Let's Encrypt.
+  \item Resolver el dominio localmente desde la VM cliente.
+\end{itemize}

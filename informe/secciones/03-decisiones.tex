@@ -1,0 +1,26 @@
+\section{Decisiones tecnológicas}
+
+\noindent
+\begin{tabularx}{\linewidth}{@{}l p{0.23\linewidth} Y@{}}
+\toprule
+\textbf{Componente} & \textbf{Elección} & \textbf{Justificación} \\
+\midrule
+Hipervisor & Proxmox VE 9.2 & Permite ejecutar las tres VM sobre un hipervisor Tipo 1 administrado desde una interfaz web. \\
+Cliente & openSUSE Leap 16.0 KDE & Distribución distinta de Ubuntu con interfaz gráfica y herramientas para SSH, navegador y FileZilla. \\
+Servidores & Ubuntu Server 26.04.1 LTS & Corresponde a la versión exigida y evita componentes gráficos innecesarios. \\
+Servidor web & Apache y PHP & WordPress soporta esta plataforma y Apache permite una configuración clara mediante VirtualHosts. \\
+Base de datos & MySQL & El enunciado exige MySQL en una VM independiente. \\
+Certificado & Let's Encrypt con DNS-01 & DNS-01 valida el control del dominio aunque la VM web permanezca en una red privada \cite{letsencrypt-challenges}. \\
+\bottomrule
+\end{tabularx}
+
+Las versiones reales de los paquetes se registrarán después de instalarlos. WordPress recomienda PHP 8.3 o superior, MySQL 8.0 o superior y HTTPS \cite{wordpress-requirements}.
+
+\subsection{Restricciones de la actividad}
+
+\begin{itemize}
+  \item No se utilizará Terraform.
+  \item Proxmox no se ejecutará dentro de otro hipervisor.
+  \item El repositorio no almacenará credenciales ni llaves privadas.
+  \item La automatización se limita a auditorías y validaciones. La infraestructura se creará manualmente.
+\end{itemize}

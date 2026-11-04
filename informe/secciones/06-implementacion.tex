@@ -1,0 +1,32 @@
+\section{Procedimiento de implementación}
+
+\subsection{Preparación disponible}
+
+El repositorio contiene plantillas sanitizadas para Proxmox, Netplan, OpenSSH, MySQL, Apache, WordPress, UFW, FileZilla y Certbot. Los archivos usan marcadores para impedir que se apliquen sin revisar interfaces, dominio y credenciales.
+
+\subsection{Secuencia prevista}
+
+\begin{enumerate}
+  \item Instalar Proxmox directamente sobre el equipo dedicado.
+  \item Crear \texttt{vmbr1} y subir las ISO oficiales.
+  \item Crear manualmente las tres VM.
+  \item Instalar openSUSE y preparar las herramientas cliente.
+  \item Instalar Ubuntu Server sin entorno gráfico en web y DB.
+  \item Configurar IP estática, SSH 22222 y UFW.
+  \item Configurar MySQL en 13306 y crear el usuario \texttt{wpapp}.
+  \item Instalar Apache, PHP, cliente MySQL y WordPress.
+  \item Aplicar permisos y probar SFTP.
+  \item Emitir el certificado mediante DNS-01 y activar HTTPS.
+\end{enumerate}
+
+\subsection{Controles antes de aplicar cambios}
+
+\begin{itemize}
+  \item \texttt{netplan try} antes de aplicar red de forma permanente.
+  \item \texttt{sshd -t} antes de recargar OpenSSH.
+  \item \texttt{apache2ctl configtest} antes de recargar Apache.
+  \item Una sesión SSH abierta mientras se cambia el puerto.
+  \item Regla SSH de UFW creada antes de habilitar el firewall.
+\end{itemize}
+
+\pendiente{Documentar comandos ejecutados, versiones y resultados reales de cada fase.}

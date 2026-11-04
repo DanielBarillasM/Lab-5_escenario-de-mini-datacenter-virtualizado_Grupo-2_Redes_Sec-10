@@ -1,0 +1,11 @@
+# Fragmento propuesto para /etc/network/interfaces en Proxmox.
+# Confirmar que 10.50.5.0/24 no se superpone con otra red.
+# Crear manualmente desde la interfaz web cuando sea posible.
+
+auto vmbr1
+iface vmbr1 inet static
+    address 10.50.5.1/24
+    bridge-ports none
+    bridge-stp off
+    bridge-fd 0
+    # Red interna del laboratorio. No declarar gateway aquí.

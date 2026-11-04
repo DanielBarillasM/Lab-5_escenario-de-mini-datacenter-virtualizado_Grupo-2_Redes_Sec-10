@@ -16,6 +16,8 @@ eggs/
 .eggs/
 lib/
 lib64/
+!scripts/lib/
+!scripts/lib/*.sh
 parts/
 sdist/
 var/
@@ -204,6 +206,39 @@ cython_debug/
 # .vscode/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
+
+# Lab 5: secretos y datos locales
+*.secret
+*.key
+*.pem
+*.p12
+*.pfx
+credentials*.ini
+dns-credentials*.ini
+configuraciones/lab5.env
+configuraciones/*-real.*
+
+# Lab 5: temporales de LaTeX
+informe/*.aux
+informe/*.bbl
+informe/*.bcf
+informe/*.blg
+informe/*.fdb_latexmk
+informe/*.fls
+informe/*.lof
+informe/*.log
+informe/*.lot
+informe/*.out
+informe/*.run.xml
+informe/*.synctex.gz
+informe/*.toc
+informe/_minted-*/
+
+# Lab 5: compilación y QA local
+informe/main.pdf
+tmp/
+.codex-finalizer/
+presentacion/.screenshots/
 
 # Ruff stuff:
 .ruff_cache/

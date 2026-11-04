@@ -1,0 +1,11 @@
+# Copiar como archivo adicional bajo /etc/mysql/mysql.conf.d/.
+# Confirmar la ruta real de configuración de la versión instalada.
+
+[mysqld]
+bind-address = 10.50.5.30
+port = 13306
+skip-name-resolve = ON
+
+# Revisar después del reinicio:
+# sudo ss -lntp | grep mysqld
+# Si MySQL X Protocol abre 33060, documentar y deshabilitarlo si no se usa.

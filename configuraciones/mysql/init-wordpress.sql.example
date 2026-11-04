@@ -1,0 +1,17 @@
+-- Crear una copia local fuera de Git y sustituir la contraseña.
+-- Ejecutar desde la VM DB mediante una sesión administrativa local.
+
+CREATE DATABASE IF NOT EXISTS wordpress
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+CREATE USER IF NOT EXISTS 'wpapp'@'10.50.5.20'
+  IDENTIFIED BY '__REPLACE_WITH_STRONG_PASSWORD__';
+
+ALTER USER 'wpapp'@'10.50.5.20'
+  IDENTIFIED BY '__REPLACE_WITH_STRONG_PASSWORD__';
+
+GRANT ALL PRIVILEGES ON wordpress.* TO 'wpapp'@'10.50.5.20';
+FLUSH PRIVILEGES;
+
+SHOW GRANTS FOR 'wpapp'@'10.50.5.20';

@@ -1,0 +1,22 @@
+\section{Hipervisor Tipo 1}
+
+Un hipervisor Tipo 1 se ejecuta directamente sobre el hardware físico. Un hipervisor Tipo 2 depende de un sistema operativo anfitrión. En esta implementación, Proxmox reemplazará el sistema operativo del equipo dedicado y ejecutará las tres VM requeridas.
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\linewidth}{>{\bfseries}lYY}
+    \toprule
+    Criterio & Tipo 1 & Tipo 2 \\
+    \midrule
+    Ejecución & Directamente sobre hardware & Sobre un sistema operativo anfitrión \\
+    Elección & Proxmox VE & VirtualBox o VMware Workstation \\
+    Cliente & VM openSUSE & Equipo anfitrión \\
+    Uso en el proyecto & Ruta para puntos extra & Ruta base alternativa \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Diferencia operativa entre hipervisores Tipo 1 y Tipo 2.}
+\end{table}
+
+Proxmox ofrece un instalador bare-metal y una interfaz web para administrar VM \cite{proxmox-install}. La instalación borrará el disco seleccionado. Por ello, el equipo debe respaldar datos y verificar el disco antes de iniciar.
+
+\evidencia{Proxmox instalado directamente sobre hardware}{01-proxmox/E01-proxmox-version.png}{Debe mostrar el equipo físico y la versión de Proxmox.}

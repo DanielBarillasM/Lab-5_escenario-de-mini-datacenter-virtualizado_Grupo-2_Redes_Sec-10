@@ -1,0 +1,28 @@
+\section{HTTPS, resolución local y firewall}
+
+\subsection{Let's Encrypt}
+
+El equipo utilizará un dominio real y validación DNS-01. Let's Encrypt comprobará un registro TXT bajo \texttt{\_acme-challenge}. Este método funciona cuando el servidor web no se expone públicamente \cite{letsencrypt-challenges}.
+
+Después de emitir el certificado, openSUSE resolverá el dominio hacia \texttt{10.50.5.20} mediante \texttt{/etc/hosts}. El navegador debe mostrar un certificado válido cuyo nombre coincida con el dominio.
+
+\subsection{UFW}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\linewidth}{l l l Y}
+    \toprule
+    \textbf{Servidor} & \textbf{Puerto} & \textbf{Protocolo} & \textbf{Origen} \\
+    \midrule
+    Web & 22222 & TCP & 10.50.5.10 \\
+    Web & 80 y 443 & TCP & 10.50.5.10 \\
+    DB & 22222 & TCP & 10.50.5.10 \\
+    DB & 13306 & TCP & 10.50.5.20 \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Reglas entrantes planificadas.}
+\end{table}
+
+La prueba negativa debe confirmar que openSUSE no alcanza MySQL directamente. La VM web sí debe conectarse a \texttt{10.50.5.30:13306}.
+
+\evidencia{Certificado válido de Let's Encrypt}{05-seguridad/E15-certificado-letsencrypt.png}{Debe mostrar nombre, emisor y vigencia sin exponer credenciales.}

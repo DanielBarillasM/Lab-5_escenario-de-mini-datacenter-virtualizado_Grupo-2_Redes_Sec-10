@@ -1,0 +1,33 @@
+\section{Plan de pruebas}
+
+\small
+\begin{longtable}{p{0.055\linewidth}p{0.25\linewidth}p{0.41\linewidth}p{0.10\linewidth}}
+\toprule
+\textbf{ID} & \textbf{Prueba} & \textbf{Resultado esperado} & \textbf{Estado} \\
+\midrule
+\endhead
+T01 & Proxmox bare-metal & Arranque directo y versión registrada & Pendiente \\
+T02 & Tres VM & Cliente, web y DB activas & Pendiente \\
+T03 & Ubuntu web & Ubuntu Server 26.04 LTS sin GUI & Pendiente \\
+T04 & Ubuntu DB & Ubuntu Server 26.04 LTS sin GUI & Pendiente \\
+T05 & Cliente & openSUSE Leap 16.0 KDE & Pendiente \\
+T06 & Conectividad & Cliente alcanza web y DB & Pendiente \\
+T07 & SSH & Acceso a web y DB por 22222 & Pendiente \\
+T08 & Puertos & 22 y 3306 cerrados & Pendiente \\
+T09 & UFW web & Solo reglas necesarias & Pendiente \\
+T10 & UFW DB & SSH desde cliente y MySQL desde web & Pendiente \\
+T11 & MySQL positivo & Web conecta a DB por 13306 & Pendiente \\
+T12 & MySQL negativo & Cliente no conecta a 13306 & Pendiente \\
+T13 & Privilegios & \texttt{wpapp} limitado a \texttt{wordpress} & Pendiente \\
+T14 & WordPress & Sitio consulta la DB remota & Pendiente \\
+T15 & SFTP & \texttt{wpadmin} modifica un archivo & Pendiente \\
+T16 & Permisos & Otro usuario recibe permiso denegado & Pendiente \\
+T17 & HTTPS & Certificado válido de Let's Encrypt & Pendiente \\
+T18 & Nombre local & Dominio resuelve hacia la VM web & Pendiente \\
+T19 & Administración & Operaciones originadas en openSUSE & Pendiente \\
+T20 & Informe & PDF compilado y revisado & Borrador \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\pendiente{Actualizar estado, resultado real y referencia de evidencia después de cada prueba.}

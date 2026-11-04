@@ -1,0 +1,23 @@
+\section{Permisos y SFTP}
+
+La carpeta de WordPress tendrá como propietario a \texttt{wpadmin} y como grupo a \texttt{www-data}. Apache conservará lectura y acceso a directorios, pero no escritura general.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Objeto} & \textbf{Propietario} & \textbf{Grupo} & \textbf{Modo} \\
+    \midrule
+    Directorios & \texttt{wpadmin} & \texttt{www-data} & 750 \\
+    Archivos & \texttt{wpadmin} & \texttt{www-data} & 640 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Permisos propuestos para WordPress.}
+\end{table}
+
+El propietario puede leer, escribir y atravesar directorios. El grupo puede leer y atravesar directorios. Otros usuarios no reciben acceso. \texttt{root} y usuarios con \texttt{sudo} constituyen excepciones administrativas inherentes.
+
+FileZilla se conectará por SFTP al puerto 22222. La demostración modificará un archivo inocuo, no un archivo crítico del tema.
+
+\evidencia{FileZilla conectado por SFTP}{05-seguridad/E12-filezilla-sftp.png}{Debe mostrar protocolo SFTP, usuario wpadmin y ruta de WordPress sin secretos.}
+\evidencia{Escritura denegada al usuario no autorizado}{05-seguridad/E13-permiso-denegado.png}{Debe mostrar el intento y el error de permisos.}

@@ -1,0 +1,9 @@
+<VirtualHost 10.50.5.20:80>
+    ServerName __LAB_DOMAIN__
+    DocumentRoot /var/www/wordpress
+
+    ErrorLog ${APACHE_LOG_DIR}/lab5-http-error.log
+    CustomLog ${APACHE_LOG_DIR}/lab5-http-access.log combined
+
+    Redirect permanent / https://__LAB_DOMAIN__/
+</VirtualHost>
