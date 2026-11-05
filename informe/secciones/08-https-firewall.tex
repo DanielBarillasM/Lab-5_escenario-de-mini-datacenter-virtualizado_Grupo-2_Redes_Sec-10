@@ -23,6 +23,16 @@ Después de emitir el certificado, openSUSE resolverá el dominio hacia \texttt{
   \caption{Reglas entrantes planificadas.}
 \end{table}
 
-La prueba negativa debe confirmar que openSUSE no alcanza MySQL directamente. La VM web sí debe conectarse a \texttt{10.50.5.30:13306}.
+Ambos servidores deniegan toda conexión entrante por defecto y permiten la saliente para actualizaciones. Cada regla está limitada por IP de origen, así que abrir un puerto no lo expone a toda la red. Solo se abren puertos TCP porque SSH, HTTP, HTTPS y MySQL no usan UDP.
+
+La regla de SSH se creó antes de ejecutar \texttt{ufw enable} y se revisó con \texttt{ufw show added}. Así el firewall nunca cortó la sesión de administración.
+
+La prueba negativa confirma que openSUSE no alcanza MySQL directamente. \texttt{nc -vz -w 3 10.50.5.30 13306} debe agotar el tiempo desde el cliente y responder \texttt{succeeded} desde la VM web. La misma prueba contra los puertos 22 y 3306 debe fallar desde el cliente.
+
+\evidencia{UFW en la VM web}{05-seguridad/E10-ufw-web.png}{Debe mostrar \texttt{ufw status verbose} con 22222, 80 y 443 desde 10.50.5.10.}
+
+\evidencia{UFW en la VM de base de datos}{05-seguridad/E11-ufw-db.png}{Debe mostrar 22222 desde 10.50.5.10 y 13306 solo desde 10.50.5.20.}
+
+\evidencia{MySQL bloqueado desde openSUSE}{05-seguridad/E09b-mysql-bloqueado.png}{Debe mostrar el fallo de \texttt{nc} desde lab5-cliente hacia 10.50.5.30:13306.}
 
 \evidencia{Certificado válido de Let's Encrypt}{05-seguridad/E15-certificado-letsencrypt.png}{Debe mostrar nombre, emisor y vigencia sin exponer credenciales.}

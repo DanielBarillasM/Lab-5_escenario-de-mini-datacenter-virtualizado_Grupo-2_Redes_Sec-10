@@ -10,8 +10,8 @@ No se debe marcar una prueba como aprobada hasta ejecutarla sobre la infraestruc
 | T04 | Ubuntu 26.04 LTS DB | `E05-db-ubuntu-version.png` | Pendiente |  |
 | T05 | openSUSE Leap con KDE | `E03-opensuse-version.png` | Pendiente |  |
 | T06 | Conectividad desde cliente | `E06-conectividad-cliente.png` | Pendiente |  |
-| T07 | SSH remoto por 22222 | `E07-ssh-remoto.png` | Pendiente | Web y DB |
-| T08 | Puertos no predeterminados | `E08-puertos-listening.png` | Pendiente | 22 y 3306 deben estar cerrados |
+| T07 | SSH remoto por 22222 | `E07-ssh-web-22222.png`, `E08-ssh-db-22222.png` | Pendiente | Web y DB |
+| T08 | Puertos no predeterminados | `E07-ssh-web-22222.png`, `E08-ssh-db-22222.png` | Pendiente | Incluyen `ss -lntp`. 22, 3306 y 33060 deben estar cerrados |
 | T09 | UFW web | `E10-ufw-web.png` | Pendiente |  |
 | T10 | UFW DB | `E11-ufw-db.png` | Pendiente |  |
 | T11 | MySQL desde web | `E09-mysql-remoto.png` | Pendiente | Puerto 13306 |
