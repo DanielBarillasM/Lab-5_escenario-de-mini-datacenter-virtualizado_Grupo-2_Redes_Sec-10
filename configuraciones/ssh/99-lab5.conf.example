@@ -1,3 +1,4 @@
+# Plantilla para lab5-web. La VM DB usa 99-lab5-db.conf.example.
 # Copiar a /etc/ssh/sshd_config.d/99-lab5.conf después de sustituir marcadores.
 # Validar con: sudo sshd -t
 

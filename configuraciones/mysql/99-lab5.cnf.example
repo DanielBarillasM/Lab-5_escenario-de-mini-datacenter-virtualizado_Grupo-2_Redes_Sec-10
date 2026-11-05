@@ -5,7 +5,8 @@
 bind-address = 10.50.5.30
 port = 13306
 skip-name-resolve = ON
+mysqlx = OFF
 
+# mysqlx = OFF evita que X Protocol abra 33060 en todas las interfaces.
 # Revisar después del reinicio:
 # sudo ss -lntp | grep mysqld
-# Si MySQL X Protocol abre 33060, documentar y deshabilitarlo si no se usa.

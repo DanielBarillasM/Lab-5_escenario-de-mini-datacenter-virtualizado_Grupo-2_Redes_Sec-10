@@ -54,6 +54,12 @@ else
   pass "Puerto MySQL 3306 cerrado"
 fi
 
+if ss -lnt | grep -Eq ':33060[[:space:]]'; then
+  fail "MySQL X Protocol todavía escucha en 33060"
+else
+  pass "Puerto 33060 cerrado"
+fi
+
 if ss -lnt | grep -Eq ":${SSH_PORT}[[:space:]]"; then
   pass "SSH escucha en $SSH_PORT"
 else
