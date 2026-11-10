@@ -1,16 +1,18 @@
-\section{Problemas encontrados}
+\section{Problemas encontrados y soluciones}
 
-No se reportan problemas de implementación porque la infraestructura física todavía no se ha ejecutado. El equipo mantendrá un registro con fecha, síntoma, causa, solución y evidencia.
+\begin{longtable}{p{0.23\linewidth}p{0.31\linewidth}p{0.36\linewidth}}
+\toprule
+\textbf{Síntoma} & \textbf{Causa identificada} & \textbf{Solución aplicada} \\
+\midrule
+Proxmox no era accesible al cambiar de router & La interfaz de administración conservaba la red anterior & Se verificó \texttt{vmbr0}, se asignó \texttt{192.168.0.6/24} y se accedió por 8006 desde la laptop. \\
+GitHub rechazaba usuario y contraseña & GitHub no acepta contraseña de cuenta para operaciones Git HTTPS & Se usó un token de alcance mínimo; no se almacenó en el repositorio. \\
+MySQL escuchaba en \texttt{127.0.0.1:13306} & El \texttt{bind-address} seguía limitado a loopback & Se fijó \texttt{10.50.5.30}, se validó la configuración y se reinició MySQL. \\
+La contraseña inicial fue rechazada & La política de contraseñas de MySQL exigía mayor complejidad & Se generó una contraseña compatible, se rotó la expuesta y se volvió a ejecutar el SQL local. \\
+Apache advertía que no podía determinar su FQDN & No existía \texttt{ServerName} global & Se creó \texttt{servername.conf}; \texttt{apache2ctl configtest} devolvió \texttt{Syntax OK}. \\
+El dominio real no estaba disponible al inicio & La zona DNS se definió después de instalar WordPress & Se trabajó temporalmente con \texttt{lab5-temporal.internal}; después se migró a \texttt{laboratorio5.com}. \\
+HTTP/HTTPS desde la DB agotaba el tiempo & UFW solo permite tráfico web desde el cliente & Se interpretó como prueba correcta de segmentación y las validaciones HTTP se ejecutaron desde openSUSE. \\
+Portapapeles limitado en noVNC & noVNC no ofrecía integración bidireccional completa & Se habilitó SPICE y se instaló Virt Viewer en Windows. \\
+\bottomrule
+\end{longtable}
 
-Los riesgos identificados durante la preparación son:
-
-\begin{itemize}
-  \item Borrar el disco incorrecto al instalar Proxmox.
-  \item Bloquear SSH al cambiar el puerto o habilitar UFW.
-  \item Exponer MySQL fuera de la red interna.
-  \item Aplicar permisos a una ruta equivocada.
-  \item Publicar un token DNS o una llave privada.
-  \item Elegir una subred que se superponga con la red física.
-\end{itemize}
-
-\pendiente{Sustituir esta sección por problemas reales y soluciones verificadas.}
+La resolución de cada incidente se acompañó de una comprobación posterior. No se deshabilitó el firewall para solucionar conectividad ni se ampliaron permisos de forma indiscriminada.

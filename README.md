@@ -1,67 +1,166 @@
-# Laboratorio 5 de Redes - Grupo 2
+# Laboratorio 5 de Redes · Grupo 2
 
-Base reproducible para implementar WordPress en una arquitectura de dos capas sobre Proxmox VE instalado en hardware físico.
+> Mini datacenter virtualizado con Proxmox VE bare-metal, WordPress y MySQL en dos capas, administración desde openSUSE y HTTPS válido mediante Let's Encrypt.
 
-## Estado actual
+## Estado del proyecto
 
-La parte de código y configuración está preparada. La ejecución sobre Proxmox, las capturas y los resultados reales permanecen pendientes hasta disponer del hardware.
+**Implementación técnica completada y auditada.** Las tres máquinas virtuales operan simultáneamente, WordPress responde en `https://laboratorio5.com`, MySQL solo es accesible desde la capa web y las auditorías finales de cliente, web y DB terminan con cero fallos.
 
-Este repositorio no contiene:
+| Área | Resultado |
+|---|---|
+| Hipervisor | Proxmox VE 9.2 instalado directamente en hardware físico |
+| Cliente | openSUSE Leap 16.0 con KDE Plasma |
+| Servidores | Ubuntu Server 26.04.1 LTS sin entorno gráfico |
+| Aplicación | WordPress sobre Apache y PHP |
+| Base de datos | MySQL independiente en `10.50.5.30:13306` |
+| Dominio | `laboratorio5.com`, DNS administrado en Amazon Route 53 |
+| TLS | Certificado válido de Let's Encrypt mediante DNS-01 |
+| Administración | SSH/SFTP por `22222/TCP` con llaves |
+| Seguridad | UFW, permisos POSIX, mínimo privilegio y pruebas negativas |
+| Auditorías | Web, DB y cliente: **0 fallos** |
 
-- Terraform ni aprovisionamiento automático de Proxmox.
-- Virtualización anidada.
-- Contraseñas, tokens DNS o llaves privadas.
-- Capturas o resultados inventados.
-- El PDF de instrucciones ni el plan externo.
+## Arquitectura
 
-El plan de trabajo se mantiene fuera del repositorio en `../PLAN_LAB5.md`. El PDF de la actividad también se conserva fuera del repositorio, tal como solicitó el equipo.
+![Arquitectura del Laboratorio 5](informe/figuras/arquitectura-dos-capas.png)
 
-## Arquitectura planificada
-
-| Nodo | Sistema | Dirección interna | Función |
+| Nodo | Sistema | IP interna | Rol |
 |---|---|---:|---|
-| `pve-lab5` | Proxmox VE 9.2 | `10.50.5.1` | Hipervisor Tipo 1 |
-| `lab5-cliente` | openSUSE Leap 16.0 KDE | `10.50.5.10` | Administración y demostración |
-| `lab5-web` | Ubuntu Server 26.04.1 LTS | `10.50.5.20` | Apache, PHP y WordPress |
-| `lab5-db` | Ubuntu Server 26.04.1 LTS | `10.50.5.30` | MySQL |
+| `pve` | Proxmox VE 9.2 | `10.50.5.1` | Hipervisor Tipo 1 y puente `vmbr1` |
+| `lab5-cliente` | openSUSE Leap 16.0 KDE | `10.50.5.10` | Navegador, SSH, FileZilla y demostración |
+| `lab5-web` | Ubuntu Server 26.04.1 LTS | `10.50.5.20` | Apache, PHP, WordPress y cliente MySQL |
+| `lab5-db` | Ubuntu Server 26.04.1 LTS | `10.50.5.30` | MySQL y base `wordpress` |
 
-Puertos planificados:
+La red interna es `10.50.5.0/24`. El cliente accede a WordPress por HTTPS y administra los servidores por SSH/SFTP. Solamente `lab5-web` puede abrir una sesión MySQL hacia `lab5-db`.
 
-- SSH y SFTP: `22222/TCP`.
-- MySQL: `13306/TCP`, accesible únicamente desde la VM web.
-- HTTPS: `443/TCP`.
-- HTTP: `80/TCP`, solo para redirección a HTTPS.
+## Puertos y política de acceso
 
-## Contenido
+| Destino | Puerto | Origen permitido | Uso |
+|---|---:|---|---|
+| `lab5-web` | `22222/TCP` | `10.50.5.10` | SSH/SFTP |
+| `lab5-web` | `80/TCP` | `10.50.5.10` | Redirección a HTTPS |
+| `lab5-web` | `443/TCP` | `10.50.5.10` | WordPress HTTPS |
+| `lab5-db` | `22222/TCP` | `10.50.5.10` | Administración SSH |
+| `lab5-db` | `13306/TCP` | `10.50.5.20` | MySQL desde WordPress |
 
-- `configuraciones/`: plantillas sanitizadas para Proxmox, Ubuntu, SSH, MySQL, Apache, WordPress, UFW y DNS-01.
-- `scripts/`: auditorías, validación del repositorio y utilidades con modo seguro.
-- `docs/`: runbooks, matriz de evidencias y estado de implementación.
-- `informe/`: fuente LaTeX del informe y PDF de borrador cuando se compile.
-- `presentacion/`: presentación HTML local y sin dependencias externas.
-- `evidencias/`: estructura vacía para evidencia real.
-- `bitacora/`: plantillas de decisiones, problemas y contribuciones.
+Los puertos predeterminados `22`, `3306` y `33060` permanecen cerrados. UFW aplica `deny incoming` y las reglas se restringen por dirección de origen.
 
-## Uso recomendado
+## Defensa en profundidad
 
-1. Leer `docs/ESTADO_IMPLEMENTACION.md`.
-2. Confirmar direcciones, interfaces y dominio antes de aplicar cualquier plantilla.
-3. Seguir `docs/RUNBOOK_IMPLEMENTACION.md` manualmente.
-4. Ejecutar los scripts de auditoría desde la máquina correspondiente.
-5. Guardar evidencia real según `docs/MATRIZ_EVIDENCIAS.md`.
-6. Sustituir los marcadores pendientes del informe y la presentación.
-7. Ensayar con `docs/RUNBOOK_DEMO.md`.
+![Defensa en profundidad](informe/figuras/defensa-en-profundidad.png)
 
-## Seguridad
+- **Identidad:** autenticación SSH mediante llaves; `root` remoto y contraseñas deshabilitados.
+- **Red:** UFW permite únicamente los flujos requeridos.
+- **Transporte:** HTTP redirige a HTTPS; el certificado pertenece a `laboratorio5.com`.
+- **Archivos:** `wpadmin:www-data`, directorios `750` y archivos `640`.
+- **Datos:** `wpapp@10.50.5.20` tiene privilegios únicamente sobre `wordpress.*`.
+- **Renovación:** Certbot usa DNS-01 de Route 53 y recarga Apache mediante un hook.
 
-Los archivos `.example` contienen marcadores y no deben copiarse sin revisión. Nunca se deben confirmar secretos en Git. Antes de cada commit se recomienda ejecutar:
+## Organización del repositorio
+
+```text
+.
+├── bitacora/             Registro de decisiones, problemas y contribuciones
+├── configuraciones/      Plantillas sanitizadas de servicios y red
+├── docs/                 Runbooks, matriz de evidencia y guía de demostración
+├── evidencias/           Capturas reales organizadas por fase
+├── informe/              Informe LaTeX, figuras propias y PDF compilado
+│   └── figuras/          Diagramas propios; no contiene capturas de infraestructura
+├── presentacion/         Presentación HTML 16:9 sin dependencias externas
+└── scripts/              Auditorías y utilidades de compilación/validación
+```
+
+Las instrucciones originales del laboratorio y el plan operativo se mantienen fuera del repositorio. No se almacenan secretos, llaves privadas, tokens, contraseñas ni el contenido real de `wp-config.php`.
+
+## Evidencias
+
+Las pruebas E01--E17 se clasifican en:
+
+1. `evidencias/01-proxmox/`: hipervisor, puentes y tres VM.
+2. `evidencias/02-cliente/`: openSUSE, conectividad, DNS local y administración.
+3. `evidencias/03-servidores/`: Ubuntu 26.04.1 y `multi-user.target`.
+4. `evidencias/04-wordpress-mysql/`: integración WordPress--MySQL.
+5. `evidencias/05-seguridad/`: SSH, SFTP, UFW, permisos y certificado.
+6. `evidencias/06-pruebas-finales/`: auditorías y renovación simulada.
+
+`evidencias/99-auxiliares/` conserva material histórico o duplicado que no debe citarse como prueba principal.
+
+## Compilar el informe
+
+Requisitos en Windows:
+
+- MiKTeX con `latexmk` y `pdflatex`.
+- PowerShell.
+
+Desde la raíz del repositorio:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\compilar-informe.ps1
+```
+
+Salida:
+
+```text
+informe/output/informe-lab5.pdf
+```
+
+## Abrir la presentación HTML
+
+Puede abrirse `presentacion/index.html` directamente. Para servirla localmente:
+
+```powershell
+node .\scripts\servir-presentacion.mjs
+```
+
+Después visite `http://127.0.0.1:8080`.
+
+Controles principales:
+
+- `→`, espacio o Page Down: avanzar.
+- `←` o Page Up: retroceder.
+- `F`: pantalla completa.
+- `P`: imprimir o exportar a PDF.
+
+## Auditorías
+
+Cada VM utiliza una copia local y revisada de `configuraciones/lab5.env.example` llamada `lab5.env`. Este archivo está ignorado por Git.
+
+```bash
+# En lab5-web
+bash ~/lab5/scripts/auditar-web.sh
+
+# En lab5-db
+bash ~/lab5/scripts/auditar-db.sh
+
+# En lab5-cliente
+bash ~/lab5/scripts/auditar-cliente.sh
+```
+
+Antes de publicar cambios:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\auditar-repositorio.ps1
 ```
 
+## Demostración recomendada
+
+1. Mostrar Proxmox, el host `pve` y las tres VM activas.
+2. Desde openSUSE, comprobar conectividad y resolución de `laboratorio5.com`.
+3. Entrar por SSH a web y DB usando `22222/TCP`.
+4. Mostrar MySQL accesible desde web y bloqueado desde cliente.
+5. Mostrar FileZilla SFTP y la prueba de permiso denegado.
+6. Abrir WordPress en HTTPS y revisar el certificado de Let's Encrypt.
+7. Cerrar con las tres auditorías de cero fallos.
+
+## Restricciones respetadas
+
+- No se utilizó Terraform.
+- No se empleó virtualización anidada.
+- Proxmox se instaló en la computadora dedicada.
+- No se publicaron secretos ni evidencia fabricada.
+- Las capturas provienen de la infraestructura real.
+
 ## Integrantes
 
-- Pablo Daniel Barillas Moreno - Carné 22193
-- Genser Andreé Catalán Espina - Carné 23401
-- Andrés Rafael Chivalán Marroquín - Carné 21534
+- Pablo Daniel Barillas Moreno — Carné 22193
+- Genser Andreé Catalán Espina — Carné 23401
+- Andrés Rafael Chivalán Marroquín — Carné 21534

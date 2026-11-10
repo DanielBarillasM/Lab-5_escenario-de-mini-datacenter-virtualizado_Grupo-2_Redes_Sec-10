@@ -2,17 +2,20 @@
 
 \subsection{Objetivo general}
 
-Implementar y administrar remotamente un servicio WordPress en dos capas, identificando el rol de cada componente, su comunicación y los controles de acceso que protegen la solución.
+Implementar y administrar remotamente un servicio WordPress en arquitectura de dos capas sobre un hipervisor Tipo 1, aplicando controles de red, identidad, permisos de archivos y cifrado TLS verificables.
 
-\subsection{Objetivos específicos}
+\subsection{Objetivos específicos alcanzados}
 
 \begin{itemize}
-  \item Instalar dos servidores Ubuntu Server 26.04 LTS sin entorno gráfico.
-  \item Separar Apache, PHP y WordPress del servidor MySQL.
-  \item Administrar ambos servidores por SSH desde una VM openSUSE con interfaz gráfica.
-  \item Aplicar permisos con \texttt{chown} y \texttt{chmod} para limitar la escritura en WordPress.
-  \item Probar SFTP con FileZilla y un usuario administrador específico.
-  \item Configurar UFW con reglas limitadas por servicio y origen.
-  \item Publicar el sitio por HTTPS con un certificado de Let's Encrypt.
-  \item Resolver el dominio localmente desde la VM cliente.
+  \item Instalar Proxmox VE en hardware físico y ejecutar tres VM simultáneamente.
+  \item Instalar Ubuntu Server 26.04.1 LTS sin entorno gráfico en las VM web y DB.
+  \item Utilizar openSUSE Leap 16.0 con KDE como estación de administración.
+  \item Separar Apache, PHP y WordPress de MySQL mediante la red interna \texttt{10.50.5.0/24}.
+  \item Cambiar SSH a \texttt{22222/TCP} y MySQL a \texttt{13306/TCP}.
+  \item Restringir MySQL a la VM web y demostrar el bloqueo desde el cliente.
+  \item Aplicar propiedad \texttt{wpadmin:www-data} y modos 750/640 en WordPress.
+  \item Validar SFTP con FileZilla y una prueba negativa de permisos.
+  \item Configurar UFW con política entrante denegada y reglas limitadas por origen.
+  \item Emitir y renovar un certificado válido de Let's Encrypt para \texttt{laboratorio5.com}.
+  \item Documentar resultados, incidencias y evidencia reproducible.
 \end{itemize}

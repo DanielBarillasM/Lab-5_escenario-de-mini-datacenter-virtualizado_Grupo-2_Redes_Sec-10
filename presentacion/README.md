@@ -1,18 +1,12 @@
-# Presentación HTML
+# Presentación HTML final
 
-## Abrir directamente
-
-Puede abrirse `index.html` en un navegador moderno.
-
-## Servir localmente
-
-Desde la raíz del repositorio:
+Abra `index.html` en un navegador moderno o ejecute desde la raíz:
 
 ```powershell
 node .\scripts\servir-presentacion.mjs
 ```
 
-Luego abrir `http://127.0.0.1:8080`.
+Después visite `http://127.0.0.1:8080`.
 
 ## Controles
 
@@ -22,6 +16,4 @@ Luego abrir `http://127.0.0.1:8080`.
 - `F`: pantalla completa.
 - `P`: imprimir o exportar a PDF.
 
-## Estado
-
-La presentación incluye marcadores explícitos para evidencia pendiente. Deben actualizarse los valores y resultados cuando la infraestructura funcione. No sustituye la demostración en vivo.
+Las imágenes se cargan desde `../evidencias/`; mantenga esa ruta relativa al copiar o presentar el repositorio.

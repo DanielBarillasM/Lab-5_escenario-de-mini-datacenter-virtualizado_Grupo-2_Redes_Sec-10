@@ -1,26 +1,22 @@
 \section{Decisiones tecnológicas}
 
-\noindent
-\begin{tabularx}{\linewidth}{@{}l p{0.23\linewidth} Y@{}}
+\begin{tabularx}{\linewidth}{@{}p{0.15\linewidth} p{0.24\linewidth} Y@{}}
 \toprule
-\textbf{Componente} & \textbf{Elección} & \textbf{Justificación} \\
+\textbf{Componente} & \textbf{Elección final} & \textbf{Justificación} \\
 \midrule
-Hipervisor & Proxmox VE 9.2 & Permite ejecutar las tres VM sobre un hipervisor Tipo 1 administrado desde una interfaz web. \\
-Cliente & openSUSE Leap 16.0 KDE & Distribución distinta de Ubuntu con interfaz gráfica y herramientas para SSH, navegador y FileZilla. \\
-Servidores & Ubuntu Server 26.04.1 LTS & Corresponde a la versión exigida y evita componentes gráficos innecesarios. \\
-Servidor web & Apache y PHP & WordPress soporta esta plataforma y Apache permite una configuración clara mediante VirtualHosts. \\
-Base de datos & MySQL & El enunciado exige MySQL en una VM independiente. \\
-Certificado & Let's Encrypt con DNS-01 & DNS-01 valida el control del dominio aunque la VM web permanezca en una red privada \cite{letsencrypt-challenges}. \\
+Hipervisor & Proxmox VE 9.2 & Hipervisor Tipo 1 con administración web y soporte KVM/QEMU. \\
+Cliente & openSUSE Leap 16.0 KDE & Distribución distinta de Ubuntu con navegador, terminal y FileZilla. \\
+Servidores & Ubuntu Server 26.04.1 LTS & Versión exigida; \texttt{multi-user.target} evita entorno gráfico. \\
+Web & Apache 2.4, PHP y WordPress & Plataforma soportada por WordPress y configurable mediante VirtualHosts. \\
+Base de datos & MySQL, puerto 13306 & Separa persistencia de la capa web y evita el puerto predeterminado. \\
+DNS & Amazon Route 53 & Zona pública autoritativa para \texttt{laboratorio5.com}. \\
+Certificado & Let's Encrypt, DNS-01 & Valida el dominio sin publicar la IP privada del servidor \cite{letsencrypt-challenges}. \\
+Firewall & UFW & Reglas simples, auditables y restringidas por IP origen. \\
 \bottomrule
 \end{tabularx}
 
-Las versiones reales de los paquetes se registrarán después de instalarlos. WordPress recomienda PHP 8.3 o superior, MySQL 8.0 o superior y HTTPS \cite{wordpress-requirements}.
+\subsection{Principios aplicados}
 
-\subsection{Restricciones de la actividad}
+Se aplicaron separación de funciones, mínimo privilegio y defensa en profundidad. La base de datos no está disponible para el cliente; el acceso SSH requiere llaves; \texttt{root} no ingresa remotamente; los archivos de WordPress solo son modificables por \texttt{wpadmin}; el firewall refuerza las restricciones de escucha de cada servicio.
 
-\begin{itemize}
-  \item No se utilizará Terraform.
-  \item Proxmox no se ejecutará dentro de otro hipervisor.
-  \item El repositorio no almacenará credenciales ni llaves privadas.
-  \item La automatización se limita a auditorías y validaciones. La infraestructura se creará manualmente.
-\end{itemize}
+WordPress recomienda HTTPS, PHP y MySQL en versiones mantenidas \cite{wordpress-requirements}. La solución evita publicar una dirección RFC 1918 en DNS público: Route 53 se usa únicamente para el desafío TXT y \texttt{/etc/hosts} resuelve el dominio dentro del laboratorio.

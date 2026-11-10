@@ -1,18 +1,30 @@
 \section{HTTPS, resolución local y firewall}
 
-\subsection{Let's Encrypt}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{figuras/defensa-en-profundidad.png}
+  \caption{Capas de control aplicadas desde la identidad hasta la base de datos.}
+\end{figure}
 
-El equipo utilizará un dominio real y validación DNS-01. Let's Encrypt comprobará un registro TXT bajo \texttt{\_acme-challenge}. Este método funciona cuando el servidor web no se expone públicamente \cite{letsencrypt-challenges}.
+La seguridad no depende de una sola regla. Llaves SSH, UFW, TLS, permisos POSIX y privilegios MySQL se complementan. Las pruebas negativas representadas en la figura validan que los caminos no autorizados realmente permanecen cerrados.
 
-Después de emitir el certificado, openSUSE resolverá el dominio hacia \texttt{10.50.5.20} mediante \texttt{/etc/hosts}. El navegador debe mostrar un certificado válido cuyo nombre coincida con el dominio.
+\subsection{Dominio y certificado}
 
-\subsection{UFW}
+El dominio \texttt{laboratorio5.com} está delegado en una zona pública de Amazon Route 53. Certbot emplea el complemento \texttt{dns-route53}; una identidad IAM limitada puede crear y retirar únicamente el TXT \texttt{\_acme-challenge.laboratorio5.com}. La dirección privada del servidor no se publica en un registro A. Desde el cliente, \texttt{/etc/hosts} resuelve el dominio hacia \texttt{10.50.5.20}.
+
+El certificado ECDSA fue emitido por Let's Encrypt para \texttt{laboratorio5.com}, con vigencia del 10 de noviembre de 2026 al 8 de febrero de 2027. El temporizador de Certbot está activo y un \textit{deploy hook} recarga Apache después de renovar. La prueba \texttt{certbot renew --dry-run} terminó correctamente.
+
+\evidencia{Certificado válido de Let's Encrypt}{05-seguridad/E15-certificado-letsencrypt.png}{Firefox muestra el nombre común y SAN \texttt{laboratorio5.com}, emisor Let's Encrypt y el período de validez. No se utilizó un certificado autofirmado.}
+
+\evidencia{Resolución local y redirección a HTTPS}{02-cliente/E16-hosts-resolucion-local.png}{\texttt{getent} devuelve \texttt{10.50.5.20}; HTTP responde 301 hacia HTTPS y la solicitud cifrada responde 200. Las tres salidas prueban nombre, redirección y disponibilidad.}
+
+\subsection{Reglas UFW}
 
 \begin{table}[H]
   \centering
   \begin{tabularx}{\linewidth}{l l l Y}
     \toprule
-    \textbf{Servidor} & \textbf{Puerto} & \textbf{Protocolo} & \textbf{Origen} \\
+    \textbf{Servidor} & \textbf{Puerto} & \textbf{Protocolo} & \textbf{Origen permitido} \\
     \midrule
     Web & 22222 & TCP & 10.50.5.10 \\
     Web & 80 y 443 & TCP & 10.50.5.10 \\
@@ -20,19 +32,13 @@ Después de emitir el certificado, openSUSE resolverá el dominio hacia \texttt{
     DB & 13306 & TCP & 10.50.5.20 \\
     \bottomrule
   \end{tabularx}
-  \caption{Reglas entrantes planificadas.}
+  \caption{Superficie de red permitida por UFW.}
 \end{table}
 
-Ambos servidores deniegan toda conexión entrante por defecto y permiten la saliente para actualizaciones. Cada regla está limitada por IP de origen, así que abrir un puerto no lo expone a toda la red. Solo se abren puertos TCP porque SSH, HTTP, HTTPS y MySQL no usan UDP.
+Ambos servidores aplican \textit{deny incoming} y \textit{allow outgoing}. No se abrieron puertos UDP porque SSH, HTTP, HTTPS y MySQL usan TCP. La regla SSH se creó antes de activar UFW para evitar perder la sesión de administración.
 
-La regla de SSH se creó antes de ejecutar \texttt{ufw enable} y se revisó con \texttt{ufw show added}. Así el firewall nunca cortó la sesión de administración.
+\evidencia{UFW en el servidor web}{05-seguridad/E10-ufw-web.png}{Las reglas permiten 22222, 80 y 443 exclusivamente desde \texttt{10.50.5.10}; el resto del tráfico entrante permanece denegado.}
 
-La prueba negativa confirma que openSUSE no alcanza MySQL directamente. \texttt{nc -vz -w 3 10.50.5.30 13306} debe agotar el tiempo desde el cliente y responder \texttt{succeeded} desde la VM web. La misma prueba contra los puertos 22 y 3306 debe fallar desde el cliente.
+\evidencia{UFW en el servidor de base de datos}{05-seguridad/E11-ufw-db.png}{La DB acepta SSH desde el cliente y MySQL únicamente desde \texttt{10.50.5.20}; no existe una regla general para 13306.}
 
-\evidencia{UFW en la VM web}{05-seguridad/E10-ufw-web.png}{Debe mostrar \texttt{ufw status verbose} con 22222, 80 y 443 desde 10.50.5.10.}
-
-\evidencia{UFW en la VM de base de datos}{05-seguridad/E11-ufw-db.png}{Debe mostrar 22222 desde 10.50.5.10 y 13306 solo desde 10.50.5.20.}
-
-\evidencia{MySQL bloqueado desde openSUSE}{05-seguridad/E09b-mysql-bloqueado.png}{Debe mostrar el fallo de \texttt{nc} desde lab5-cliente hacia 10.50.5.30:13306.}
-
-\evidencia{Certificado válido de Let's Encrypt}{05-seguridad/E15-certificado-letsencrypt.png}{Debe mostrar nombre, emisor y vigencia sin exponer credenciales.}
+\evidencia{MySQL bloqueado desde openSUSE}{05-seguridad/E09b-mysql-bloqueado.png}{La prueba \texttt{nc} desde \texttt{10.50.5.10} no alcanza 13306. El mismo servicio sí es accesible desde la VM web, por lo que el bloqueo es selectivo y no una caída de MySQL.}

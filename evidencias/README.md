@@ -1,15 +1,13 @@
-# Evidencias
+# Evidencias del Laboratorio 5
 
-Esta carpeta recibirá únicamente evidencia real obtenida durante la implementación.
+Las capturas proceden de la infraestructura real y están organizadas por fase. Los archivos principales conservan los identificadores E01--E17 usados por el informe y la matriz de pruebas.
 
-## Subcarpetas
+- `01-proxmox/`: hipervisor bare-metal, puentes y tres VM activas.
+- `02-cliente/`: openSUSE, conectividad, resolución local y administración remota.
+- `03-servidores/`: versión y modo sin interfaz gráfica de los servidores Ubuntu.
+- `04-wordpress-mysql/`: escucha MySQL, privilegios, conexión entre capas y WordPress.
+- `05-seguridad/`: SSH/SFTP, UFW, pruebas negativas y certificado.
+- `06-pruebas-finales/`: auditorías y renovación simulada de Certbot.
+- `99-auxiliares/`: duplicados o capturas históricas que no deben citarse como prueba principal.
 
-- `00-preparacion`: checksums e ISO.
-- `01-proxmox`: hardware, versión y VM.
-- `02-cliente`: openSUSE y administración.
-- `03-servidores`: Ubuntu, red y SSH.
-- `04-wordpress-mysql`: integración de capas.
-- `05-seguridad`: UFW, SFTP, permisos y HTTPS.
-- `06-pruebas-finales`: ensayo completo.
-
-No se deben guardar secretos ni capturas fabricadas.
+No se almacenan contraseñas, tokens de AWS, llaves privadas ni el contenido de `wp-config.php`.

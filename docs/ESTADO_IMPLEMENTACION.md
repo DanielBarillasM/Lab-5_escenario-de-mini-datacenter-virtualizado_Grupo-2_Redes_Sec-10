@@ -1,40 +1,57 @@
 # Estado de implementación
 
-Actualizado: 3 de noviembre de 2026.
+Actualizado: 10 de noviembre de 2026.
 
-## Preparado en el repositorio
+## Resultado general
 
-- [x] Arquitectura y direccionamiento propuestos.
-- [x] Plantillas de red para Proxmox y Ubuntu.
-- [x] Plantilla de SSH en puerto no predeterminado.
-- [x] Plantilla de MySQL restringida a la red interna.
-- [x] VirtualHosts HTTP y HTTPS para Apache.
-- [x] Plantilla sanitizada de `wp-config.php`.
-- [x] Procedimiento de UFW con reglas por origen.
-- [x] Procedimiento DNS-01 para Let's Encrypt.
-- [x] Script seguro para permisos de WordPress.
-- [x] Scripts de auditoría para cliente, web y base de datos.
-- [x] Fuente del informe LaTeX.
-- [x] Presentación HTML local.
-- [x] Matriz de evidencias y runbook de demostración.
+La infraestructura fue implementada sobre hardware físico y las pruebas principales fueron ejecutadas. El informe y la presentación utilizan evidencia real clasificada en `evidencias/`.
 
-## Pendiente de hardware o decisiones reales
+## Infraestructura
 
-- [ ] Computadora física dedicada a Proxmox.
-- [ ] Verificación de Intel VT-x o AMD-V.
-- [ ] Interfaces físicas y nombres reales de NIC.
-- [ ] Instalación bare-metal de Proxmox.
-- [ ] Creación manual de las tres VM.
-- [ ] Confirmación de que `10.50.5.0/24` no se superpone con otra red.
-- [ ] Instalación de Ubuntu Server 26.04.1 LTS en ambas VM servidor.
-- [ ] Instalación de openSUSE Leap 16.0 KDE en la VM cliente.
-- [ ] Dominio o subdominio real controlado por el equipo.
-- [ ] Proveedor DNS y método de automatización DNS-01.
-- [ ] Versiones reales de Apache, PHP, MySQL y WordPress.
-- [ ] Evidencias y resultados de las pruebas T01 a T20.
-- [ ] Problemas reales encontrados y soluciones aplicadas.
-- [ ] Conclusiones basadas en la implementación.
+- [x] Computadora física dedicada a Proxmox.
+- [x] Proxmox VE 9.2 instalado como hipervisor Tipo 1.
+- [x] Virtualización por hardware disponible para KVM/QEMU.
+- [x] Puente interno `vmbr1` en `10.50.5.1/24`.
+- [x] VM 101 `lab5-web` en `10.50.5.20`.
+- [x] VM 102 `lab5-db` en `10.50.5.30`.
+- [x] VM 103 `lab5-cliente` en `10.50.5.10`.
+- [x] Tres VM activas simultáneamente.
 
-## Regla de actualización
+## Sistemas y servicios
 
-Una casilla solo puede marcarse como completada después de ejecutar la acción y conservar evidencia. Las plantillas no demuestran que el requisito funciona.
+- [x] Ubuntu Server 26.04.1 LTS sin GUI en web y DB.
+- [x] openSUSE Leap 16.0 con KDE en el cliente.
+- [x] SSH/SFTP por `22222/TCP` con llaves.
+- [x] Apache, PHP y WordPress en la VM web.
+- [x] MySQL en VM independiente, `10.50.5.30:13306`.
+- [x] Usuario `wpapp` restringido a `10.50.5.20` y `wordpress.*`.
+- [x] UFW activo con reglas por origen.
+- [x] Permisos `wpadmin:www-data`, directorios 750 y archivos 640.
+
+## Dominio y HTTPS
+
+- [x] Dominio real `laboratorio5.com`.
+- [x] Zona pública administrada en Amazon Route 53.
+- [x] Certbot con complemento `dns-route53`.
+- [x] Certificado válido de Let's Encrypt.
+- [x] HTTP redirige permanentemente a HTTPS.
+- [x] Resolución local hacia `10.50.5.20`.
+- [x] Renovación simulada exitosa y hook de recarga de Apache.
+
+## Documentación y entrega
+
+- [x] Evidencias E01--E17 organizadas por fase.
+- [x] Matriz T01--T20 actualizada.
+- [x] Informe LaTeX compilado en `informe/output/informe-lab5.pdf`.
+- [x] Presentación HTML final con evidencia real.
+- [x] README principal actualizado.
+- [x] Problemas y soluciones documentados.
+
+## Control pendiente antes de entregar
+
+- [ ] Confirmar que el título visible de WordPress diga “Grupo 2”.
+- [ ] Ensayar la exposición completa con cronómetro.
+- [ ] Ejecutar la auditoría final del repositorio y revisar el último commit.
+- [ ] Verificar que ninguna captura nueva muestre credenciales.
+
+Una casilla solo se marcó como completada después de ejecutar la acción y conservar una prueba. Las plantillas por sí solas no se consideran evidencia.

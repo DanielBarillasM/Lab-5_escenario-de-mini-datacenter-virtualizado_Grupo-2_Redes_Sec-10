@@ -236,6 +236,10 @@ informe/_minted-*/
 
 # Lab 5: compilación y QA local
 informe/main.pdf
+informe/guion-presentacion.pdf
+informe/guion-presentacion.tex
+informe/output/guion-presentacion-lab5.pdf
+evidencias/99-auxiliares/
 tmp/
 .codex-finalizer/
 presentacion/.screenshots/

@@ -1,33 +1,41 @@
-\section{Plan de pruebas}
+\section{Resultados de pruebas}
 
 \small
-\begin{longtable}{p{0.055\linewidth}p{0.25\linewidth}p{0.41\linewidth}p{0.10\linewidth}}
+\begin{longtable}{p{0.055\linewidth}p{0.25\linewidth}p{0.43\linewidth}p{0.10\linewidth}}
 \toprule
-\textbf{ID} & \textbf{Prueba} & \textbf{Resultado esperado} & \textbf{Estado} \\
+\textbf{ID} & \textbf{Prueba} & \textbf{Resultado observado} & \textbf{Estado} \\
 \midrule
 \endhead
-T01 & Proxmox bare-metal & Arranque directo y versión registrada & Pendiente \\
-T02 & Tres VM & Cliente, web y DB activas & Pendiente \\
-T03 & Ubuntu web & Ubuntu Server 26.04 LTS sin GUI & Pendiente \\
-T04 & Ubuntu DB & Ubuntu Server 26.04 LTS sin GUI & Pendiente \\
-T05 & Cliente & openSUSE Leap 16.0 KDE & Pendiente \\
-T06 & Conectividad & Cliente alcanza web y DB & Pendiente \\
-T07 & SSH & Acceso a web y DB por 22222 & Pendiente \\
-T08 & Puertos & 22 y 3306 cerrados & Pendiente \\
-T09 & UFW web & Solo reglas necesarias & Pendiente \\
-T10 & UFW DB & SSH desde cliente y MySQL desde web & Pendiente \\
-T11 & MySQL positivo & Web conecta a DB por 13306 & Pendiente \\
-T12 & MySQL negativo & Cliente no conecta a 13306 & Pendiente \\
-T13 & Privilegios & \texttt{wpapp} limitado a \texttt{wordpress} & Pendiente \\
-T14 & WordPress & Sitio consulta la DB remota & Pendiente \\
-T15 & SFTP & \texttt{wpadmin} modifica un archivo & Pendiente \\
-T16 & Permisos & Otro usuario recibe permiso denegado & Pendiente \\
-T17 & HTTPS & Certificado válido de Let's Encrypt & Pendiente \\
-T18 & Nombre local & Dominio resuelve hacia la VM web & Pendiente \\
-T19 & Administración & Operaciones originadas en openSUSE & Pendiente \\
-T20 & Informe & PDF compilado y revisado & Borrador \\
+T01 & Proxmox bare-metal & Consola \texttt{root@pve}, Proxmox VE 9.2 y recursos físicos & Aprobada \\
+T02 & Tres VM & 101, 102 y 103 activas simultáneamente & Aprobada \\
+T03 & Ubuntu web & Ubuntu 26.04.1 LTS; \texttt{multi-user.target} & Aprobada \\
+T04 & Ubuntu DB & Ubuntu 26.04.1 LTS; \texttt{multi-user.target} & Aprobada \\
+T05 & Cliente & openSUSE Leap 16.0, KDE Plasma 6.4.2 & Aprobada \\
+T06 & Conectividad & Cliente alcanza 10.50.5.1, .20 y .30 & Aprobada \\
+T07 & SSH & Web y DB accesibles por 22222 con llave & Aprobada \\
+T08 & Puertos & 22, 3306 y 33060 cerrados & Aprobada \\
+T09 & UFW web & Solo 22222, 80 y 443 desde cliente & Aprobada \\
+T10 & UFW DB & SSH desde cliente; MySQL solo desde web & Aprobada \\
+T11 & MySQL positivo & Web conecta a DB por 13306 & Aprobada \\
+T12 & MySQL negativo & Cliente no conecta a 13306 & Aprobada \\
+T13 & Privilegios & \texttt{wpapp} limitado a \texttt{wordpress.*} & Aprobada \\
+T14 & WordPress & Sitio responde 200 y usa DB remota & Aprobada \\
+T15 & SFTP & \texttt{wpadmin} accede mediante FileZilla & Aprobada \\
+T16 & Permisos & Usuario no autorizado recibe denegación & Aprobada \\
+T17 & HTTPS & Certificado válido de Let's Encrypt & Aprobada \\
+T18 & Nombre local & Dominio resuelve a 10.50.5.20 & Aprobada \\
+T19 & Administración & Operaciones originadas en openSUSE & Aprobada \\
+T20 & Informe & PDF compilado y revisado visualmente & Aprobada \\
 \bottomrule
 \end{longtable}
 \normalsize
 
-\pendiente{Actualizar estado, resultado real y referencia de evidencia después de cada prueba.}
+\evidencia{Administración remota desde openSUSE}{02-cliente/E17-administracion-opensuse.png}{La sesión parte de \texttt{lab5-cliente} y consulta el estado de servicios por SSH 22222. Junto con E08 demuestra que web y DB se operan desde el cliente, no desde la consola local.}
+
+\evidencia{Auditoría final del servidor web}{06-pruebas-finales/AUX-auditoria-web-sin-fallos.png}{El script comprueba sistema operativo, ausencia de GUI, comandos, Apache, puertos, UFW y conexión remota a MySQL; el resumen termina sin fallos.}
+
+\evidencia{Auditoría final del servidor DB}{06-pruebas-finales/AUX-auditoria-db-sin-fallos.png}{La auditoría verifica Ubuntu, MySQL, escucha exclusiva en 13306, puertos predeterminados cerrados, UFW y el usuario restringido. El resumen registra 14 comprobaciones correctas y cero fallos.}
+
+\evidencia{Auditoría final del cliente}{06-pruebas-finales/AUX-auditoria-cliente-sin-fallos.png}{Se comprueban herramientas, conectividad, SSH, bloqueo de MySQL, resolución local y HTTPS válido. La salida final no contiene avisos ni fallos.}
+
+\evidencia{Renovación simulada del certificado}{06-pruebas-finales/AUX-certbot-renovacion-automatica.png}{\texttt{certbot renew --dry-run} valida que DNS-01, las credenciales restringidas de Route 53 y el hook de Apache permiten una renovación futura sin intervención manual.}

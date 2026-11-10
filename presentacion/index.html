@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Presentación del Laboratorio 5 de Redes, Grupo 2">
+  <meta name="description" content="Presentación final del Laboratorio 5 de Redes, Grupo 2">
   <title>Laboratorio 5 de Redes - Grupo 2</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -11,241 +11,188 @@
   <main class="deck" aria-label="Presentación del Laboratorio 5">
     <section class="slide title-slide active" data-title="Portada">
       <div class="rule"></div>
-      <p class="course">Redes, Sección 10</p>
-      <h1>WordPress en arquitectura de dos capas</h1>
-      <p class="subtitle">Laboratorio 5 · Grupo 2</p>
+      <p class="course">Universidad del Valle de Guatemala · Redes, Sección 10</p>
+      <h1>Mini datacenter virtualizado</h1>
+      <p class="subtitle">WordPress en dos capas · Proxmox bare-metal</p>
       <div class="team">
         <p>Pablo Daniel Barillas Moreno <span>22193</span></p>
         <p>Genser Andreé Catalán Espina <span>23401</span></p>
         <p>Andrés Rafael Chivalán Marroquín <span>21534</span></p>
       </div>
-      <p class="draft-note">Presentación preparada. Evidencia de infraestructura pendiente.</p>
+      <p class="status-note">Implementación final verificada · 10 de noviembre de 2026</p>
     </section>
 
-    <section class="slide" data-title="Objetivos">
-      <header><p>01</p><h2>Objetivos y requisitos</h2></header>
-      <div class="split">
-        <div>
-          <h3>Arquitectura</h3>
-          <p>Separar WordPress y MySQL en dos máquinas virtuales conectadas por una red interna de Proxmox.</p>
-          <h3>Administración</h3>
-          <p>Operar ambos servidores por SSH desde una VM cliente con interfaz gráfica.</p>
-        </div>
-        <div class="key-points">
-          <p><strong>Ubuntu Server 26.04 LTS</strong><br>Sin entorno gráfico en web y DB.</p>
-          <p><strong>HTTPS válido</strong><br>Certificado emitido por Let's Encrypt.</p>
-          <p><strong>Acceso restringido</strong><br>UFW, SFTP y permisos de archivos.</p>
-        </div>
+    <section class="slide" data-title="Resultado">
+      <header><p>01</p><h2>Resultado alcanzado</h2></header>
+      <div class="metric-grid">
+        <article><strong>3</strong><span>VM simultáneas</span></article>
+        <article><strong>2</strong><span>capas separadas</span></article>
+        <article><strong>0</strong><span>fallos de auditoría</span></article>
+        <article><strong>HTTPS</strong><span>Let's Encrypt válido</span></article>
       </div>
-    </section>
-
-    <section class="slide" data-title="Aclaraciones">
-      <header><p>02</p><h2>Aclaraciones del docente</h2></header>
-      <div class="statement-list">
-        <article>
-          <h3>Sin Terraform</h3>
-          <p>Las VM, redes y discos se crean manualmente. El repositorio contiene plantillas y auditorías, no aprovisionamiento.</p>
-        </article>
-        <article>
-          <h3>Proxmox sobre hardware físico</h3>
-          <p>La virtualización anidada anula los puntos extra. Proxmox debe reemplazar el sistema operativo del equipo dedicado.</p>
-        </article>
-        <article>
-          <h3>Primero los requisitos base</h3>
-          <p>Los extras no compensan una implementación incompleta. Cada criterio necesita una prueba en vivo.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="slide" data-title="Hipervisores">
-      <header><p>03</p><h2>Hipervisor Tipo 1 y Tipo 2</h2></header>
-      <table class="comparison">
-        <thead><tr><th></th><th>Tipo 1</th><th>Tipo 2</th></tr></thead>
-        <tbody>
-          <tr><th>Ejecución</th><td>Directamente sobre hardware</td><td>Sobre un sistema operativo anfitrión</td></tr>
-          <tr><th>Elección del equipo</th><td class="accent-cell">Proxmox VE 9.2</td><td>No se usa en la ruta extra</td></tr>
-          <tr><th>Cliente</th><td>VM openSUSE dentro de Proxmox</td><td>La computadora anfitriona</td></tr>
-          <tr><th>Condición</th><td>Instalación bare-metal demostrable</td><td>Sin puntos de Tipo 1</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section class="slide" data-title="Proxmox">
-      <header><p>04</p><h2>Proxmox bare-metal</h2></header>
-      <div class="hardware-layout">
-        <div class="machine">
-          <p class="machine-label">COMPUTADORA FÍSICA</p>
-          <h3>Proxmox VE 9.2</h3>
-          <p>Virtualización Intel VT-x o AMD-V</p>
-          <p>16 GB de RAM recomendados</p>
-          <p>SSD con espacio para tres VM</p>
-        </div>
-        <div class="evidence-placeholder">
-          <p>Evidencia pendiente</p>
-          <span>Foto del equipo, arranque y salida de <code>pveversion -v</code></span>
-        </div>
+      <div class="key-points horizontal">
+        <p><strong>Hipervisor:</strong> Proxmox VE 9.2 sobre hardware físico.</p>
+        <p><strong>Sitio:</strong> <code>https://laboratorio5.com</code>.</p>
+        <p><strong>Seguridad:</strong> llaves SSH, UFW y mínimo privilegio.</p>
       </div>
     </section>
 
     <section class="slide" data-title="Arquitectura">
-      <header><p>05</p><h2>Arquitectura de las tres VM</h2></header>
-      <div class="architecture" role="img" aria-label="Cliente openSUSE conectado a servidor web, que consulta a servidor MySQL">
-        <article>
-          <p class="node-kind">CLIENTE</p>
-          <h3>openSUSE Leap 16.0</h3>
-          <p>10.50.5.10</p>
-          <small>Navegador · SSH · FileZilla</small>
-        </article>
-        <div class="connection"><strong>HTTPS 443</strong><span>SSH/SFTP 22222</span></div>
-        <article>
-          <p class="node-kind">WEB</p>
-          <h3>Ubuntu Server 26.04</h3>
-          <p>10.50.5.20</p>
-          <small>Apache · PHP · WordPress</small>
-        </article>
-        <div class="connection"><strong>MySQL 13306</strong><span>Solo desde web</span></div>
-        <article>
-          <p class="node-kind">BASE DE DATOS</p>
-          <h3>Ubuntu Server 26.04</h3>
-          <p>10.50.5.30</p>
-          <small>MySQL · Base wordpress</small>
-        </article>
+      <header><p>02</p><h2>Arquitectura de red</h2></header>
+      <div class="evidence-stage large">
+        <img class="evidence-image contain" src="../informe/figuras/arquitectura-dos-capas.png" alt="Diagrama de arquitectura del Laboratorio 5">
       </div>
-      <p class="footnote">Red interna propuesta: 10.50.5.0/24. Debe confirmarse que no se superpone con la red física.</p>
+      <p class="caption">Red interna <code>10.50.5.0/24</code> sobre <code>vmbr1</code>; MySQL solo acepta a la VM web.</p>
     </section>
 
-    <section class="slide" data-title="Red y puertos">
-      <header><p>06</p><h2>Direccionamiento y puertos</h2></header>
-      <table>
-        <thead><tr><th>Nodo</th><th>IP interna</th><th>Servicio</th><th>Origen autorizado</th></tr></thead>
-        <tbody>
-          <tr><td>Proxmox</td><td>10.50.5.1</td><td>8006/TCP</td><td>Cliente y recuperación</td></tr>
-          <tr><td>Web</td><td>10.50.5.20</td><td>22222, 80, 443/TCP</td><td>Cliente</td></tr>
-          <tr><td>DB</td><td>10.50.5.30</td><td>22222/TCP</td><td>Cliente</td></tr>
-          <tr><td>DB</td><td>10.50.5.30</td><td>13306/TCP</td><td>Solo VM web</td></tr>
-        </tbody>
-      </table>
-      <p class="callout">SSH y MySQL usan TCP. No se abrirán puertos UDP sin un servicio que los necesite.</p>
-    </section>
-
-    <section class="slide" data-title="Dos capas">
-      <header><p>07</p><h2>Separación de WordPress y MySQL</h2></header>
-      <div class="flow">
+    <section class="slide" data-title="Proxmox">
+      <header><p>03</p><h2>Proxmox Tipo 1</h2></header>
+      <div class="media-split">
+        <img class="evidence-image" src="../evidencias/01-proxmox/E02-proxmox-tres-vm.png" alt="Proxmox con tres máquinas virtuales activas">
         <div>
-          <h3>Solicitud web</h3>
-          <p>El navegador solicita el sitio por HTTPS y nombre de dominio.</p>
-        </div>
-        <div>
-          <h3>Ejecución PHP</h3>
-          <p>Apache entrega WordPress y PHP procesa la solicitud.</p>
-        </div>
-        <div>
-          <h3>Consulta remota</h3>
-          <p>WordPress usa <code>wpapp</code> contra <code>10.50.5.30:13306</code>.</p>
-        </div>
-        <div>
-          <h3>Privilegio limitado</h3>
-          <p><code>wpapp</code> solo administra la base <code>wordpress</code>.</p>
+          <h3>Bare-metal</h3>
+          <p>Proxmox reemplaza el sistema operativo de la torre y ejecuta KVM/QEMU directamente.</p>
+          <ul>
+            <li>VM 101: <code>lab5-web</code></li>
+            <li>VM 102: <code>lab5-db</code></li>
+            <li>VM 103: <code>lab5-cliente</code></li>
+          </ul>
+          <p class="callout compact-callout">Sin Terraform y sin virtualización anidada.</p>
         </div>
       </div>
     </section>
 
-    <section class="slide" data-title="SSH y SFTP">
-      <header><p>08</p><h2>SSH, SFTP y permisos</h2></header>
-      <div class="permission-layout">
-        <div>
-          <h3>Acceso remoto</h3>
-          <p>SSH y SFTP escuchan en 22222/TCP. La autenticación prevista usa llaves.</p>
-          <h3>FileZilla</h3>
-          <p><code>wpadmin</code> modifica un archivo inocuo y el navegador muestra el cambio.</p>
-        </div>
+    <section class="slide" data-title="Sistemas operativos">
+      <header><p>04</p><h2>Sistemas operativos</h2></header>
+      <div class="media-split">
+        <img class="evidence-image contain" src="../evidencias/02-cliente/E03-opensuse-version.png" alt="Versión de openSUSE y KDE">
         <table class="compact">
-          <thead><tr><th>Objeto</th><th>Propietario</th><th>Grupo</th><th>Modo</th></tr></thead>
+          <thead><tr><th>VM</th><th>Sistema</th><th>Arranque</th></tr></thead>
           <tbody>
-            <tr><td>Directorios</td><td>wpadmin</td><td>www-data</td><td>750</td></tr>
-            <tr><td>Archivos</td><td>wpadmin</td><td>www-data</td><td>640</td></tr>
+            <tr><td>Cliente</td><td>openSUSE Leap 16.0 + KDE</td><td>graphical</td></tr>
+            <tr><td>Web</td><td>Ubuntu Server 26.04.1</td><td>multi-user</td></tr>
+            <tr><td>DB</td><td>Ubuntu Server 26.04.1</td><td>multi-user</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="callout">La prueba negativa debe mostrar que otro usuario recibe permiso denegado.</p>
     </section>
 
-    <section class="slide" data-title="HTTPS">
-      <header><p>09</p><h2>HTTPS y resolución local</h2></header>
-      <div class="dns-flow">
-        <div><strong>1</strong><p>El equipo controla un dominio real.</p></div>
-        <div><strong>2</strong><p>Certbot publica el TXT de DNS-01.</p></div>
-        <div><strong>3</strong><p>Let's Encrypt emite el certificado.</p></div>
-        <div><strong>4</strong><p><code>/etc/hosts</code> dirige el dominio a 10.50.5.20.</p></div>
+    <section class="slide" data-title="Conectividad">
+      <header><p>05</p><h2>Conectividad interna</h2></header>
+      <div class="evidence-stage">
+        <img class="evidence-image contain" src="../evidencias/02-cliente/E06-conectividad-cliente.png" alt="Pruebas de conectividad desde openSUSE">
       </div>
-      <p class="callout">DNS-01 permite emitir el certificado sin exponer la VM web a Internet.</p>
+      <p class="caption">Desde openSUSE se alcanza <code>10.50.5.1</code>, <code>10.50.5.20</code> y <code>10.50.5.30</code>.</p>
     </section>
 
-    <section class="slide" data-title="UFW">
-      <header><p>10</p><h2>UFW y pruebas negativas</h2></header>
-      <div class="firewall-layout">
-        <div>
-          <h3>VM web</h3>
-          <p>SSH, HTTP y HTTPS solo desde 10.50.5.10.</p>
-        </div>
-        <div>
-          <h3>VM DB</h3>
-          <p>SSH desde el cliente. MySQL únicamente desde 10.50.5.20.</p>
-        </div>
+    <section class="slide" data-title="SSH">
+      <header><p>06</p><h2>Administración por SSH</h2></header>
+      <div class="two-evidence">
+        <figure><img src="../evidencias/05-seguridad/E07-ssh-web-22222.png" alt="SSH al servidor web"><figcaption>Web: 22222/TCP</figcaption></figure>
+        <figure><img src="../evidencias/05-seguridad/E08-ssh-db-22222.png" alt="SSH al servidor DB"><figcaption>DB: 22222/TCP</figcaption></figure>
       </div>
-      <div class="negative-test">
-        <p><strong>Debe funcionar:</strong> web a DB por 13306.</p>
-        <p><strong>Debe fallar:</strong> cliente a DB por 13306.</p>
-        <p><strong>Deben estar cerrados:</strong> SSH 22 y MySQL 3306.</p>
+      <p class="callout">Autenticación con llaves, <code>root</code> remoto deshabilitado y puerto 22 cerrado.</p>
+    </section>
+
+    <section class="slide" data-title="MySQL">
+      <header><p>07</p><h2>MySQL como segunda capa</h2></header>
+      <div class="media-split">
+        <img class="evidence-image contain" src="../evidencias/04-wordpress-mysql/E09-mysql-remoto.png" alt="Conexión remota a MySQL">
+        <div>
+          <h3>Flujo permitido</h3>
+          <p><code>lab5-web → 10.50.5.30:13306</code></p>
+          <h3>Cuenta limitada</h3>
+          <p><code>wpapp@10.50.5.20</code> solo administra <code>wordpress.*</code>.</p>
+          <h3>Puertos cerrados</h3>
+          <p><code>3306</code> y <code>33060</code> no escuchan.</p>
+        </div>
       </div>
     </section>
 
-    <section class="slide" data-title="Evidencias">
-      <header><p>11</p><h2>Estado de evidencias</h2></header>
-      <div class="evidence-status">
-        <div>
-          <strong>20</strong>
-          <p>pruebas definidas</p>
-        </div>
-        <div>
-          <strong>0</strong>
-          <p>pruebas ejecutadas</p>
-        </div>
-        <div>
-          <strong>Pendiente</strong>
-          <p>hardware y dominio</p>
-        </div>
+    <section class="slide" data-title="Firewall">
+      <header><p>08</p><h2>UFW y pruebas negativas</h2></header>
+      <div class="evidence-stage large">
+        <img class="evidence-image contain" src="../informe/figuras/defensa-en-profundidad.png" alt="Diagrama de defensa en profundidad">
       </div>
-      <p class="callout">Las plantillas y scripts preparan la implementación. No demuestran que los servicios funcionan.</p>
+      <p class="caption">La prueba negativa confirma que el cliente no puede acceder a MySQL por 13306.</p>
     </section>
 
-    <section class="slide" data-title="Criterios de cierre">
-      <header><p>12</p><h2>Criterios de cierre</h2></header>
-      <ul class="large-list">
-        <li>Las tres VM funcionan simultáneamente sobre Proxmox bare-metal.</li>
-        <li>La matriz T01 a T20 contiene resultados y evidencia real.</li>
-        <li>WordPress abre por dominio y HTTPS válido.</li>
-        <li>Las pruebas negativas de firewall y permisos fallan como se espera.</li>
-        <li>Los tres integrantes pueden explicar cualquier componente.</li>
-      </ul>
+    <section class="slide" data-title="SFTP">
+      <header><p>09</p><h2>SFTP y permisos</h2></header>
+      <div class="two-evidence">
+        <figure><img src="../evidencias/05-seguridad/E12-filezilla-sftp.png" alt="FileZilla conectado por SFTP"><figcaption><code>wpadmin</code> por SFTP 22222</figcaption></figure>
+        <figure><img src="../evidencias/05-seguridad/E13-permiso-denegado.png" alt="Permiso denegado"><figcaption>Usuario no autorizado: denegado</figcaption></figure>
+      </div>
+      <p class="callout"><code>wpadmin:www-data</code> · directorios 750 · archivos 640.</p>
+    </section>
+
+    <section class="slide" data-title="WordPress HTTPS">
+      <header><p>10</p><h2>WordPress por HTTPS</h2></header>
+      <div class="evidence-stage large">
+        <img class="evidence-image contain" src="../evidencias/04-wordpress-mysql/E14-wordpress-https.png" alt="WordPress en laboratorio5.com">
+      </div>
+      <p class="caption"><code>https://laboratorio5.com</code> responde desde openSUSE y consulta la DB remota.</p>
+    </section>
+
+    <section class="slide" data-title="Certificado">
+      <header><p>11</p><h2>Let's Encrypt + Route 53</h2></header>
+      <div class="media-split">
+        <img class="evidence-image contain" src="../evidencias/05-seguridad/E15-certificado-letsencrypt.png" alt="Certificado de Let's Encrypt">
+        <div>
+          <h3>Validación DNS-01</h3>
+          <p>Route 53 publica temporalmente <code>_acme-challenge</code>.</p>
+          <h3>Certificado real</h3>
+          <p>CN/SAN: <code>laboratorio5.com</code>.</p>
+          <h3>Renovación</h3>
+          <p>Temporizador activo, hook de Apache y <code>dry-run</code> exitoso.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Resolución local">
+      <header><p>12</p><h2>Resolución y redirección</h2></header>
+      <div class="evidence-stage">
+        <img class="evidence-image contain" src="../evidencias/02-cliente/E16-hosts-resolucion-local.png" alt="Resolución local y respuesta HTTPS">
+      </div>
+      <div class="result-line"><span>DNS local → 10.50.5.20</span><span>HTTP → 301</span><span>HTTPS → 200</span></div>
+    </section>
+
+    <section class="slide" data-title="Auditorías">
+      <header><p>13</p><h2>Auditorías finales</h2></header>
+      <div class="audit-grid">
+        <article><h3>Web</h3><strong>0 fallos</strong><p>Apache, SSH, UFW y MySQL remoto.</p></article>
+        <article><h3>DB</h3><strong>0 fallos</strong><p>MySQL 13306, privilegios y puertos cerrados.</p></article>
+        <article><h3>Cliente</h3><strong>0 fallos</strong><p>Conectividad, bloqueo DB, DNS y HTTPS.</p></article>
+      </div>
+      <p class="callout">Las pruebas positivas y negativas coinciden con la política diseñada.</p>
+    </section>
+
+    <section class="slide" data-title="Incidencias">
+      <header><p>14</p><h2>Incidencias y aprendizaje</h2></header>
+      <div class="statement-list">
+        <article><h3>Cambio de router</h3><p>Se corrigió la IP de gestión de Proxmox y se validó <code>vmbr0</code>.</p></article>
+        <article><h3>MySQL en loopback</h3><p>Se cambió <code>bind-address</code> a <code>10.50.5.30</code>.</p></article>
+        <article><h3>Dominio posterior</h3><p>Se migró de un nombre temporal a Route 53 + Let's Encrypt sin reinstalar WordPress.</p></article>
+        <article><h3>Defensa en profundidad</h3><p>No se resolvieron problemas desactivando UFW ni ampliando permisos.</p></article>
+      </div>
     </section>
 
     <section class="slide final-slide" data-title="Demostración">
       <div class="rule"></div>
       <p class="course">Demostración en vivo</p>
-      <h2>Proxmox, conectividad, SSH, MySQL, SFTP y HTTPS</h2>
-      <p class="subtitle">La demostración comienza desde la VM cliente openSUSE.</p>
+      <h2>Infraestructura completa y verificable</h2>
+      <p class="subtitle">La demostración comienza desde <code>lab5-cliente</code>.</p>
       <div class="demo-order">
-        <span>Proxmox</span><span>SSH</span><span>MySQL</span><span>SFTP</span><span>HTTPS</span>
+        <span>Proxmox</span><span>Red</span><span>SSH</span><span>MySQL</span><span>SFTP</span><span>HTTPS</span>
       </div>
-      <p class="draft-note">No avanzar a esta diapositiva hasta completar el preflight.</p>
+      <p class="status-note">Grupo 2 · Redes, Sección 10</p>
     </section>
   </main>
 
   <div class="progress" aria-hidden="true"><span></span></div>
   <nav aria-label="Navegación de diapositivas">
     <button type="button" data-action="prev" aria-label="Diapositiva anterior">←</button>
-    <output aria-live="polite">1 / 14</output>
+    <output aria-live="polite">1 / 16</output>
     <button type="button" data-action="next" aria-label="Diapositiva siguiente">→</button>
   </nav>
   <script src="presentation.js"></script>

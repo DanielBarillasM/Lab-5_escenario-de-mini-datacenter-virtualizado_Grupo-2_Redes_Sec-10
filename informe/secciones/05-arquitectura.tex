@@ -6,28 +6,25 @@
     \toprule
     \textbf{Nodo} & \textbf{Sistema} & \textbf{IP interna} & \textbf{Función} \\
     \midrule
-    \texttt{pve-lab5} & Proxmox VE & 10.50.5.1 & Hipervisor y administración de VM \\
-    \texttt{lab5-cliente} & openSUSE Leap & 10.50.5.10 & Navegador, SSH, FileZilla y resolución local \\
-    \texttt{lab5-web} & Ubuntu Server & 10.50.5.20 & Apache, PHP, WordPress y cliente MySQL \\
-    \texttt{lab5-db} & Ubuntu Server & 10.50.5.30 & MySQL y base \texttt{wordpress} \\
+    \texttt{pve} & Proxmox VE & 10.50.5.1 & Puente interno \texttt{vmbr1} y ejecución de VM \\
+    \texttt{lab5-cliente} & openSUSE Leap 16.0 & 10.50.5.10 & Navegador, SSH, SFTP y resolución local \\
+    \texttt{lab5-web} & Ubuntu Server 26.04.1 & 10.50.5.20 & Apache, PHP, WordPress y cliente MySQL \\
+    \texttt{lab5-db} & Ubuntu Server 26.04.1 & 10.50.5.30 & MySQL y base \texttt{wordpress} \\
     \bottomrule
   \end{tabularx}
-  \caption{Direccionamiento propuesto para la red interna.}
+  \caption{Direccionamiento verificado de la red interna \texttt{10.50.5.0/24}.}
 \end{table}
 
-La red \texttt{10.50.5.0/24} permanece pendiente de validación contra la red física. Proxmox utilizará \texttt{vmbr1} como puente interno. Cada VM podrá disponer de una segunda interfaz para actualizaciones, pero solo una interfaz tendrá ruta predeterminada.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figuras/arquitectura-dos-capas.png}
+\caption{Flujo de comunicación entre las dos capas y la estación de administración.}
+\end{figure}
 
-\begin{center}
-\fbox{\parbox{0.9\linewidth}{\centering
-\textbf{openSUSE 10.50.5.10}\\
-\vspace{0.3em}
-$\downarrow$ HTTPS 443 y SSH/SFTP 22222\\
-\vspace{0.3em}
-\textbf{WordPress 10.50.5.20}\\
-\vspace{0.3em}
-$\downarrow$ MySQL 13306\\
-\vspace{0.3em}
-\textbf{MySQL 10.50.5.30}}}
-\end{center}
+La figura sintetiza roles, direcciones, puertos y dependencia entre capas. El cliente nunca consulta MySQL directamente; el servidor web actúa como único consumidor de la base de datos.
 
-\pendiente{Confirmar nombres de interfaces, subred y rutas después de crear las VM.}
+El puente \texttt{vmbr1} proporciona aislamiento lógico y la dirección \texttt{10.50.5.1/24}. Las VM mantuvieron una interfaz de salida para actualizaciones y una interfaz interna estática sin una segunda ruta predeterminada. Esta separación evita rutas asimétricas y permite que UFW identifique con precisión el origen.
+
+\evidencia{openSUSE Leap 16.0 con KDE Plasma}{02-cliente/E03-opensuse-version.png}{La salida identifica \texttt{lab5-cliente}, openSUSE Leap 16.0, escritorio KDE, Plasma 6.4.2 y \texttt{graphical.target}; la interfaz gráfica se limita a la VM cliente.}
+
+\evidencia{Conectividad de la red interna}{02-cliente/E06-conectividad-cliente.png}{Desde \texttt{lab5-cliente} se alcanzan el puente Proxmox y ambos servidores. La prueba confirma direccionamiento y conectividad antes de evaluar servicios específicos.}

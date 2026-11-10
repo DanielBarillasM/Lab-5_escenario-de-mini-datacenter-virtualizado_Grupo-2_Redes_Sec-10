@@ -1,9 +1,9 @@
-\section{Conclusiones preliminares}
+\section{Conclusiones}
 
-La preparación permite establecer criterios verificables antes de disponer del hardware. La separación entre plantillas, auditorías y evidencia evita confundir una configuración propuesta con un sistema funcional.
+La separación de WordPress y MySQL hizo visible el flujo real entre capas y permitió aplicar controles distintos a cada servidor. MySQL quedó limitado por tres mecanismos complementarios: dirección de escucha, usuario ligado a \texttt{10.50.5.20} y UFW. La prueba negativa desde openSUSE confirmó que la restricción funciona sin impedir la operación de WordPress.
 
-La arquitectura propuesta limita MySQL a la VM web, reserva la administración para openSUSE y define pruebas negativas para firewall y permisos. Estas decisiones deben validarse durante la implementación.
+Proxmox bare-metal permitió ejecutar simultáneamente el cliente gráfico y los dos servidores sin recurrir a virtualización anidada. Mantener la administración en openSUSE obligó a validar SSH, SFTP, resolución de nombres y navegador desde la perspectiva correcta del usuario del laboratorio.
 
-No se presentan conclusiones finales sobre rendimiento, seguridad efectiva o funcionamiento de WordPress. Dichas conclusiones dependerán de las pruebas T01 a T20 y de la demostración en vivo.
+El certificado de Let's Encrypt emitido mediante DNS-01 demostró que un servicio privado puede utilizar una identidad TLS pública sin exponer su IP en Internet. Route 53 solo publica el desafío temporal; la resolución interna continúa controlada por \texttt{/etc/hosts}. La renovación simulada reduce el riesgo de vencimiento.
 
-\pendiente{Redactar conclusiones finales basadas en resultados reales y contribuciones de los tres integrantes.}
+Finalmente, las pruebas positivas no fueron suficientes por sí solas. Los resultados más relevantes incluyeron fallos esperados: MySQL bloqueado desde el cliente y escritura denegada a un usuario no autorizado. Estas pruebas negativas, junto con auditorías de cero fallos, permiten concluir que la solución cumple tanto funcionalidad como restricciones de seguridad.

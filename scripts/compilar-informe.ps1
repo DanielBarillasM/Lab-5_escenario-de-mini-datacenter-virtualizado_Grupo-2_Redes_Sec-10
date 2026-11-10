@@ -10,8 +10,8 @@ Push-Location $reportDir
 try {
     & latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
     if ($LASTEXITCODE -ne 0) { throw "latexmk terminó con código $LASTEXITCODE" }
-    Copy-Item -LiteralPath (Join-Path $reportDir 'main.pdf') -Destination (Join-Path $outputDir 'informe-lab5-borrador.pdf') -Force
-    Write-Host 'Informe compilado en informe/output/informe-lab5-borrador.pdf' -ForegroundColor Green
+    Copy-Item -LiteralPath (Join-Path $reportDir 'main.pdf') -Destination (Join-Path $outputDir 'informe-lab5.pdf') -Force
+    Write-Host 'Informe compilado en informe/output/informe-lab5.pdf' -ForegroundColor Green
 }
 finally {
     Pop-Location

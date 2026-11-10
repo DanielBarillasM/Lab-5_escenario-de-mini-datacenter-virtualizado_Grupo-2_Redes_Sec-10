@@ -1,86 +1,34 @@
 \section{Procedimiento de implementación}
 
-\subsection{Preparación disponible}
+\subsection{Creación y preparación de las VM}
 
-El repositorio contiene plantillas sanitizadas para Proxmox, Netplan, OpenSSH, MySQL, Apache, WordPress, UFW, FileZilla y Certbot. Los archivos usan marcadores para impedir que se apliquen sin revisar interfaces, dominio y credenciales.
+En Proxmox se crearon manualmente las VM 101, 102 y 103. Las dos VM servidoras recibieron Ubuntu Server 26.04.1 LTS y se fijó \texttt{multi-user.target}; el cliente recibió openSUSE Leap 16.0 y KDE. Los servidores se administran mediante cuentas sin privilegios directos y \texttt{sudo} solo cuando una tarea lo exige.
 
-\subsection{Secuencia prevista}
+\evidencia{Ubuntu Server 26.04.1 LTS en la VM web}{03-servidores/E04-web-ubuntu-version.png}{La captura muestra \texttt{lab5-web}, la versión Ubuntu 26.04.1 LTS y \texttt{multi-user.target}. La ausencia de \texttt{graphical.target} satisface la restricción de servidor sin GUI.}
 
-\begin{enumerate}
-  \item Instalar Proxmox directamente sobre el equipo dedicado.
-  \item Crear \texttt{vmbr1} y subir las ISO oficiales.
-  \item Crear manualmente las tres VM.
-  \item Instalar openSUSE y preparar las herramientas cliente.
-  \item Instalar Ubuntu Server sin entorno gráfico en web y DB.
-  \item Configurar IP estática, SSH 22222 y UFW.
-  \item Configurar MySQL en 13306 y crear el usuario \texttt{wpapp}.
-  \item Instalar Apache, PHP, cliente MySQL y WordPress.
-  \item Aplicar permisos y probar SFTP.
-  \item Emitir el certificado mediante DNS-01 y activar HTTPS.
-\end{enumerate}
+\evidencia{Ubuntu Server 26.04.1 LTS en la VM DB}{03-servidores/E05-db-ubuntu-version.png}{La misma comprobación en \texttt{lab5-db} confirma versión y objetivo de arranque de texto, independiente del servidor web.}
 
-\subsection{Controles antes de aplicar cambios}
+\subsection{Administración SSH}
 
-\begin{itemize}
-  \item \texttt{netplan try} antes de aplicar red de forma permanente.
-  \item \texttt{sshd -t} antes de recargar OpenSSH.
-  \item \texttt{apache2ctl configtest} antes de recargar Apache.
-  \item Una sesión SSH abierta mientras se cambia el puerto.
-  \item Regla SSH de UFW creada antes de habilitar el firewall.
-\end{itemize}
+En ambos servidores OpenSSH escucha en \texttt{22222/TCP}. La configuración deshabilita autenticación por contraseña y acceso remoto de \texttt{root}; las llaves ed25519 permanecen en \texttt{lab5-cliente}. La VM web admite \texttt{labadmin} y \texttt{wpadmin}; la VM DB admite la cuenta administrativa de base de datos. El puerto 22 se mantiene cerrado.
 
-\subsection{Servidores Ubuntu}
-
-Las VM \texttt{lab5-web} y \texttt{lab5-db} usan Ubuntu Server 26.04.1 LTS sin entorno gráfico, como exige la guía. Cada una tiene un usuario administrativo \texttt{labadmin}, OpenSSH Server y QEMU Guest Agent para que Proxmox muestre su IP y pueda apagarla de forma ordenada.
-
-La ausencia de interfaz gráfica se comprueba con \texttt{systemctl get-default}, que debe devolver \texttt{multi-user.target}. La versión se comprueba con \texttt{/etc/os-release}.
-
-\pendiente{Registrar \texttt{VERSION} exacta, kernel y fecha de instalación de cada VM.}
-
-\evidencia{Ubuntu Server 26.04 en la VM web}{03-servidores/E04-web-ubuntu-version.png}{Debe mostrar hostname, \texttt{/etc/os-release} y \texttt{systemctl get-default}.}
-
-\evidencia{Ubuntu Server 26.04 en la VM de base de datos}{03-servidores/E05-db-ubuntu-version.png}{Debe mostrar hostname, \texttt{/etc/os-release} y \texttt{systemctl get-default}.}
-
-\subsection{Direccionamiento estático}
-
-Cada servidor tiene dos interfaces. La conectada a \texttt{vmbr0} usa DHCP y es la única con ruta predeterminada, para descargar paquetes. La conectada a \texttt{vmbr1} tiene una IP fija sin gateway, porque todo el tráfico del laboratorio ocurre dentro de \texttt{10.50.5.0/24}. Tener dos rutas predeterminadas haría que las respuestas salieran por la interfaz equivocada.
-
-La configuración se escribe en \texttt{/etc/netplan/50-lab5.yaml} con permisos \texttt{600}. Se desactiva la configuración de red de cloud-init para que el archivo generado por el instalador no compita con el nuestro. Se aplica con \texttt{netplan try}, que revierte el cambio si no se confirma en 120 segundos, y se verifica con \texttt{ip -br address}, \texttt{ip route} y \texttt{ping} desde openSUSE.
-
-\begin{lstlisting}[caption={Netplan de la VM web. La VM DB usa 10.50.5.30/24.}]
-network:
-  version: 2
-  ethernets:
-    __UPLINK__:
-      dhcp4: true
-    __LAB__:
-      dhcp4: false
-      addresses: [10.50.5.20/24]
+\begin{lstlisting}[caption={Controles principales de OpenSSH.}]
+Port 22222
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+AllowUsers labadmin wpadmin
 \end{lstlisting}
 
-\pendiente{Sustituir \texttt{\_\_UPLINK\_\_} y \texttt{\_\_LAB\_\_} por los nombres reales de interfaz y anotar la salida de \texttt{ip route}.}
+\evidencia{Acceso SSH a la VM web por 22222}{05-seguridad/E07-ssh-web-22222.png}{La sesión se origina en openSUSE y llega a \texttt{lab5-web} por el puerto alternativo. La comprobación de escucha permite verificar que 22/TCP no quedó expuesto.}
 
-\evidencia{Conectividad desde openSUSE hacia Proxmox, web y DB}{02-cliente/E06-conectividad-cliente.png}{Debe mostrar \texttt{ping} exitoso a 10.50.5.1, 10.50.5.20 y 10.50.5.30.}
+\evidencia{Acceso SSH a la VM DB por 22222}{05-seguridad/E08-ssh-db-22222.png}{La evidencia registra la sesión remota hacia \texttt{lab5-db}; la administración no depende de la consola de Proxmox.}
 
-\subsection{Administración por SSH}
+\subsection{MySQL en la segunda capa}
 
-Toda la administración de los servidores se hace desde \texttt{lab5-cliente}. La consola de Proxmox solo se usó para instalar Ubuntu y configurar la red inicial.
+MySQL se configuró con \texttt{bind-address=10.50.5.30}, puerto \texttt{13306}, \texttt{skip-name-resolve=ON} y X Protocol desactivado. Así, 3306 y 33060 no quedan en escucha. La base \texttt{wordpress} utiliza el usuario \texttt{wpapp@10.50.5.20}; este usuario posee privilegios sobre \texttt{wordpress.*}, no privilegios globales.
 
-El acceso usa una llave ed25519 generada en openSUSE y copiada con \texttt{ssh-copy-id}. Después de confirmar el acceso con llave se aplicó \texttt{/etc/ssh/sshd\_config.d/99-lab5.conf}, que cambia el puerto a 22222, desactiva contraseñas, prohíbe el acceso de root y limita los usuarios con \texttt{AllowUsers}. En la VM web se permite además \texttt{wpadmin} para SFTP. En la VM DB solo se permite \texttt{labadmin}.
-
-Ubuntu activa OpenSSH mediante \texttt{ssh.socket}, por lo que el puerto nuevo solo se aplica después de \texttt{systemctl daemon-reload} y de reiniciar el socket. Para no perder acceso, la sesión original quedó abierta hasta que una segunda sesión por 22222 funcionó.
-
-\pendiente{Anotar la versión de OpenSSH y cualquier diferencia encontrada al reiniciar el socket.}
-
-\evidencia{SSH por el puerto 22222 hacia la VM web}{05-seguridad/E07-ssh-web-22222.png}{Debe mostrar la conexión desde openSUSE y \texttt{ss -lntp} sin el puerto 22.}
-
-\evidencia{SSH por el puerto 22222 hacia la VM de base de datos}{05-seguridad/E08-ssh-db-22222.png}{Debe mostrar la conexión desde openSUSE y \texttt{ss -lntp} sin los puertos 22, 3306 ni 33060.}
-
-\subsection{MySQL en una VM independiente}
-
-MySQL Server corre solo en \texttt{lab5-db}. El archivo \texttt{/etc/mysql/mysql.conf.d/99-lab5.cnf} cambia el puerto a 13306 y fija \texttt{bind-address} en 10.50.5.30, de modo que el servicio no escucha en la interfaz de \texttt{vmbr0}. También desactiva X Protocol, que por defecto abre el puerto 33060 en todas las interfaces, y activa \texttt{skip-name-resolve} para que los permisos dependan de la IP y no de DNS.
-
-\begin{lstlisting}[caption={Configuración de escucha de MySQL.}]
+\begin{lstlisting}[caption={Parámetros efectivos de escucha de MySQL.}]
 [mysqld]
 bind-address = 10.50.5.30
 port = 13306
@@ -88,14 +36,14 @@ skip-name-resolve = ON
 mysqlx = OFF
 \end{lstlisting}
 
-La base \texttt{wordpress} pertenece al usuario \texttt{wpapp}, que solo puede conectarse desde 10.50.5.20. Su privilegio es \texttt{ALL PRIVILEGES ON wordpress.*}, sin permisos globales ni \texttt{GRANT OPTION}. La contraseña se escribió en una copia local del script SQL que se eliminó con \texttt{shred} después de ejecutarlo.
+\evidencia{MySQL escucha únicamente en 10.50.5.30:13306}{04-wordpress-mysql/E09a-mysql-escucha-13306.png}{La salida de \texttt{ss} y las variables del servidor confirman la IP y el puerto alternativo. No existe escucha en 3306 ni en todas las interfaces.}
 
-La integración entre capas se comprueba desde la VM web con el cliente MySQL. La consulta \texttt{SELECT CURRENT\_USER(), DATABASE(), @@hostname, @@port} debe devolver \texttt{wpapp@10.50.5.20}, \texttt{wordpress}, \texttt{lab5-db} y 13306. Intentar \texttt{CREATE DATABASE} con \texttt{wpapp} debe fallar, lo que demuestra que no es administrador.
+\evidencia{Conexión de WordPress hacia la VM DB}{04-wordpress-mysql/E09-mysql-remoto.png}{La consulta se ejecuta desde la VM web contra \texttt{lab5-db:13306}; demuestra el flujo positivo entre las dos capas.}
 
-\pendiente{Registrar la versión real de MySQL Server y del cliente MySQL de la VM web.}
+\evidencia{Privilegios limitados de wpapp}{04-wordpress-mysql/E09c-show-grants.png}{\texttt{SHOW GRANTS} muestra el alcance \texttt{wordpress.*} y el origen \texttt{10.50.5.20}; no se incluye contraseña ni permiso global.}
 
-\evidencia{Conexión de la VM web a MySQL por 13306}{04-wordpress-mysql/E09-mysql-remoto.png}{Debe mostrar la consulta desde lab5-web y su resultado.}
+\subsection{WordPress y Apache}
 
-\evidencia{Privilegios del usuario wpapp}{04-wordpress-mysql/E09c-show-grants.png}{Debe mostrar \texttt{SHOW GRANTS} y el host 10.50.5.20, sin contraseñas.}
+WordPress se instaló en \texttt{/var/www/wordpress}. \texttt{wp-config.php} apunta a \texttt{10.50.5.30:13306} y fija \texttt{WP\_HOME} y \texttt{WP\_SITEURL} en \url{https://laboratorio5.com}. Apache usa un VirtualHost en 80 que redirige permanentemente a HTTPS y otro en 443 con el certificado de Let's Encrypt. Antes de cada recarga se ejecutó \texttt{apache2ctl configtest}.
 
-\pendiente{Documentar comandos ejecutados, versiones y resultados reales de cada fase.}
+\evidencia{WordPress operativo mediante HTTPS}{04-wordpress-mysql/E14-wordpress-https.png}{Firefox carga el sitio desde \texttt{laboratorio5.com} con indicador de conexión segura. La página prueba la integración Apache--PHP--WordPress--MySQL desde la VM cliente.}

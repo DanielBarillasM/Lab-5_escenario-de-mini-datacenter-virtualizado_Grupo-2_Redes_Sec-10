@@ -1,6 +1,6 @@
 \section{Permisos y SFTP}
 
-La carpeta de WordPress tendrá como propietario a \texttt{wpadmin} y como grupo a \texttt{www-data}. Apache conservará lectura y acceso a directorios, pero no escritura general.
+La raíz de WordPress pertenece a \texttt{wpadmin:www-data}. Los directorios usan modo 750 y los archivos modo 640. El propietario puede modificar contenido; Apache, miembro del grupo \texttt{www-data}, puede leer y atravesar directorios; los demás usuarios no reciben acceso.
 
 \begin{table}[H]
   \centering
@@ -8,16 +8,16 @@ La carpeta de WordPress tendrá como propietario a \texttt{wpadmin} y como grupo
     \toprule
     \textbf{Objeto} & \textbf{Propietario} & \textbf{Grupo} & \textbf{Modo} \\
     \midrule
-    Directorios & \texttt{wpadmin} & \texttt{www-data} & 750 \\
-    Archivos & \texttt{wpadmin} & \texttt{www-data} & 640 \\
+    \texttt{/var/www/wordpress} & \texttt{wpadmin} & \texttt{www-data} & 750 \\
+    Directorios descendientes & \texttt{wpadmin} & \texttt{www-data} & 750 \\
+    Archivos WordPress & \texttt{wpadmin} & \texttt{www-data} & 640 \\
     \bottomrule
   \end{tabular}
-  \caption{Permisos propuestos para WordPress.}
+  \caption{Modelo de propiedad y permisos aplicado.}
 \end{table}
 
-El propietario puede leer, escribir y atravesar directorios. El grupo puede leer y atravesar directorios. Otros usuarios no reciben acceso. \texttt{root} y usuarios con \texttt{sudo} constituyen excepciones administrativas inherentes.
+FileZilla se configuró con protocolo SFTP, host \texttt{10.50.5.20}, puerto 22222, usuario \texttt{wpadmin} y llave dedicada \texttt{lab5\_wpadmin}. No se utilizaron FTP ni credenciales de contraseña. La prueba positiva accedió al árbol de WordPress; la negativa utilizó un usuario sin autorización de escritura.
 
-FileZilla se conectará por SFTP al puerto 22222. La demostración modificará un archivo inocuo, no un archivo crítico del tema.
+\evidencia{FileZilla conectado mediante SFTP}{05-seguridad/E12-filezilla-sftp.png}{La interfaz muestra la sesión SFTP del usuario \texttt{wpadmin} y el contenido remoto de WordPress. Esto demuestra que la administración de archivos parte del cliente gráfico.}
 
-\evidencia{FileZilla conectado por SFTP}{05-seguridad/E12-filezilla-sftp.png}{Debe mostrar protocolo SFTP, usuario wpadmin y ruta de WordPress sin secretos.}
-\evidencia{Escritura denegada al usuario no autorizado}{05-seguridad/E13-permiso-denegado.png}{Debe mostrar el intento y el error de permisos.}
+\evidencia{Escritura denegada al usuario no autorizado}{05-seguridad/E13-permiso-denegado.png}{El intento del usuario de prueba falla por permisos. La prueba negativa verifica que el acceso general al servidor no equivale a permiso de modificación sobre WordPress.}

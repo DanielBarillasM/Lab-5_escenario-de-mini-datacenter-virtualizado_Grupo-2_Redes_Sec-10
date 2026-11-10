@@ -1,22 +1,22 @@
 \section{Hipervisor Tipo 1}
 
-Un hipervisor Tipo 1 se ejecuta directamente sobre el hardware físico. Un hipervisor Tipo 2 depende de un sistema operativo anfitrión. En esta implementación, Proxmox reemplazará el sistema operativo del equipo dedicado y ejecutará las tres VM requeridas.
+Un hipervisor Tipo 1 se ejecuta directamente sobre el hardware; uno Tipo 2 depende de un sistema operativo anfitrión. Proxmox sustituyó el sistema operativo de la torre dedicada, por lo que no existe una capa de VirtualBox, VMware Workstation u otro hipervisor entre Proxmox y el equipo físico \cite{proxmox-install}.
 
 \begin{table}[H]
   \centering
   \begin{tabularx}{\linewidth}{>{\bfseries}lYY}
     \toprule
-    Criterio & Tipo 1 & Tipo 2 \\
+    Criterio & Implementación del laboratorio & Alternativa no utilizada \\
     \midrule
-    Ejecución & Directamente sobre hardware & Sobre un sistema operativo anfitrión \\
-    Elección & Proxmox VE & VirtualBox o VMware Workstation \\
-    Cliente & VM openSUSE & Equipo anfitrión \\
-    Uso en el proyecto & Ruta para puntos extra & Ruta base alternativa \\
+    Tipo & Tipo 1, bare-metal & Tipo 2 sobre Windows \\
+    Plataforma & Proxmox VE 9.2 & VirtualBox/VMware \\
+    Máquinas & KVM/QEMU 101, 102 y 103 & VM anidadas \\
+    Condición de puntos extra & Conservada & Se anularía \\
     \bottomrule
   \end{tabularx}
-  \caption{Diferencia operativa entre hipervisores Tipo 1 y Tipo 2.}
+  \caption{Diferencia práctica entre la implementación elegida y virtualización anidada.}
 \end{table}
 
-Proxmox ofrece un instalador bare-metal y una interfaz web para administrar VM \cite{proxmox-install}. La instalación borrará el disco seleccionado. Por ello, el equipo debe respaldar datos y verificar el disco antes de iniciar.
+\evidencia{Versión y recursos del host Proxmox}{01-proxmox/E01-proxmox-version.jpeg}{La consola corresponde a \texttt{root@pve}, muestra la rama Proxmox VE 9.2, almacenamiento local activo y ocho banderas de virtualización detectadas en el CPU físico. Esto documenta el host, no una de las VM.}
 
-\evidencia{Proxmox instalado directamente sobre hardware}{01-proxmox/E01-proxmox-version.png}{Debe mostrar el equipo físico y la versión de Proxmox.}
+\evidencia{Tres máquinas virtuales activas en Proxmox}{01-proxmox/E02-proxmox-tres-vm.png}{La interfaz de Proxmox muestra las VM 101 \texttt{lab5-web}, 102 \texttt{lab5-db} y 103 \texttt{lab5-cliente} con indicadores verdes, uso de CPU, memoria y tiempo de actividad simultáneo.}

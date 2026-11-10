@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-nodecimaldot]{babel}
-\usepackage[a4paper,margin=2.5cm,headheight=15pt]{geometry}
+\usepackage[a4paper,margin=2.35cm,headheight=15pt]{geometry}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -18,6 +18,8 @@
 \usepackage{listings}
 \usepackage{hyperref}
 
+\graphicspath{{../evidencias/}}
+
 \definecolor{uvggreen}{HTML}{007A4D}
 \definecolor{darkgreen}{HTML}{07563B}
 \definecolor{softgreen}{HTML}{DCEFE6}
@@ -29,7 +31,7 @@
   linkcolor=darkgreen,
   urlcolor=uvggreen,
   citecolor=darkgreen,
-  pdftitle={Laboratorio 5 - WordPress en arquitectura de dos capas},
+  pdftitle={Laboratorio 5 - Mini datacenter virtualizado},
   pdfauthor={Grupo 2 - Redes Sección 10}
 }
 
@@ -57,26 +59,27 @@
   showstringspaces=false
 }
 
-\newcommand{\pendiente}[1]{%
-  \par\noindent
-  \colorbox{softgreen}{\parbox{0.95\linewidth}{\textbf{Pendiente de evidencia real:} #1}}
-  \par\medskip
-}
-
 \newcommand{\evidencia}[3]{%
-  \Needspace{7cm}%
+  \Needspace{9cm}%
   \begin{figure}[H]
     \centering
     \IfFileExists{../evidencias/#2}{%
-      \includegraphics[width=0.92\linewidth,height=0.55\textheight,keepaspectratio]{../evidencias/#2}%
+      \includegraphics[width=0.94\linewidth,height=0.60\textheight,keepaspectratio]{../evidencias/#2}%
     }{%
       \fbox{\parbox[c][4.5cm][c]{0.88\linewidth}{\centering
-        \textcolor{warning}{\textbf{Evidencia pendiente}}\\[0.6em]
+        \textcolor{warning}{\textbf{Evidencia no encontrada}}\\[0.6em]
         Archivo esperado: \texttt{#2}\\[0.4em]
         #3}}
     }
     \caption{#1}
   \end{figure}
+  \noindent\textbf{Interpretación.} #3\par\medskip
+}
+
+\newcommand{\resultado}[1]{%
+  \par\noindent
+  \colorbox{softgreen}{\parbox{0.95\linewidth}{\textbf{Resultado verificado:} #1}}
+  \par\medskip
 }
 
 \begin{document}
@@ -85,16 +88,16 @@
 \begin{titlepage}
   \pagecolor{softgreen}
   \color{darkgreen}
-  \vspace*{1.5cm}
+  \vspace*{1.3cm}
   {\Large Universidad del Valle de Guatemala\par}
-  \vspace{0.5cm}
+  \vspace{0.4cm}
   {\large Redes, Sección 10\par}
   \vfill
   {\Huge\bfseries Laboratorio 5\par}
-  \vspace{0.4cm}
-  {\LARGE WordPress en arquitectura de dos capas\par}
-  \vspace{0.8cm}
-  {\large Mini Datacenter Virtualizado\par}
+  \vspace{0.35cm}
+  {\LARGE Mini datacenter virtualizado\par}
+  \vspace{0.45cm}
+  {\Large WordPress en arquitectura de dos capas\par}
   \vfill
   \begin{tabular}{ll}
     Pablo Daniel Barillas Moreno & Carné 22193 \\
@@ -106,7 +109,7 @@
   \vspace{0.3cm}
   {\large 10 de noviembre de 2026\par}
   \vspace{0.8cm}
-  \colorbox{warning}{\textcolor{white}{\bfseries BORRADOR: faltan implementación y evidencia real}}
+  \colorbox{uvggreen}{\textcolor{white}{\bfseries Implementación verificada con evidencia real}}
   \vspace*{1cm}
 \end{titlepage}
 \nopagecolor
@@ -134,15 +137,14 @@
 \bibliography{bibliografia}
 
 \appendix
-\section{Archivos preparados en el repositorio}
+\section{Material reproducible del repositorio}
 
 \begin{itemize}
-  \item Plantillas sanitizadas bajo \texttt{configuraciones/}.
+  \item Plantillas sanitizadas bajo \texttt{configuraciones/}; no contienen contraseñas ni llaves.
   \item Auditorías de solo lectura bajo \texttt{scripts/}.
-  \item Matriz de evidencias bajo \texttt{docs/MATRIZ\_EVIDENCIAS.md}.
-  \item Presentación local bajo \texttt{presentacion/}.
+  \item Evidencias clasificadas por fase bajo \texttt{evidencias/}.
+  \item Matriz de pruebas bajo \texttt{docs/MATRIZ\_EVIDENCIAS.md}.
+  \item Presentación HTML autocontenida bajo \texttt{presentacion/}.
 \end{itemize}
-
-\pendiente{Agregar configuraciones finales sanitizadas después de aplicarlas y verificarlas.}
 
 \end{document}
