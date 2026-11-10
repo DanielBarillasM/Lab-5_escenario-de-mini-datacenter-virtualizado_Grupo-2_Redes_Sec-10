@@ -143,6 +143,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\auditar-repositorio.ps1
 
 ## Demostración recomendada
 
+El procedimiento completo, los comandos, resultados esperados, contingencias y preguntas probables están en [docs/DEMOSTRACION_EN_VIVO_LAB5.md](docs/DEMOSTRACION_EN_VIVO_LAB5.md).
+
 1. Mostrar Proxmox, el host `pve` y las tres VM activas.
 2. Desde openSUSE, comprobar conectividad y resolución de `laboratorio5.com`.
 3. Entrar por SSH a web y DB usando `22222/TCP`.
