@@ -2,6 +2,20 @@
 
 La raíz de WordPress pertenece a \texttt{wpadmin:www-data}. Los directorios usan modo 750 y los archivos modo 640. El propietario puede modificar contenido; Apache, miembro del grupo \texttt{www-data}, puede leer y atravesar directorios; los demás usuarios no reciben acceso.
 
+\subsection{Aplicación reproducible de \texttt{chown} y \texttt{chmod}}
+
+Los permisos se aplicaron con el script revisado \texttt{scripts/aplicar-permisos-wordpress.sh}. Primero se ejecutó sin \texttt{--apply} para validar la ruta y los usuarios; después se aplicaron las operaciones equivalentes del Listado~\ref{lst:permisos-wordpress}. Se evitó \texttt{chmod 777} porque otorgaría privilegios innecesarios a terceros.
+
+\begin{lstlisting}[caption={Comandos aplicados a la carpeta de WordPress.},label={lst:permisos-wordpress}]
+sudo chown -R wpadmin:www-data /var/www/wordpress
+sudo find /var/www/wordpress -type d -exec chmod 750 {} \;
+sudo find /var/www/wordpress -type f -exec chmod 640 {} \;
+\end{lstlisting}
+
+\texttt{chown} establece a \texttt{wpadmin} como propietario y a \texttt{www-data} como grupo. En directorios, 750 concede lectura, escritura y recorrido al propietario; lectura y recorrido al grupo; ningún permiso a otros. En archivos, 640 concede lectura y escritura al propietario, lectura al grupo y ningún permiso a otros. El resultado esperado era que Apache pudiera servir el sitio como miembro de \texttt{www-data}, que \texttt{wpadmin} pudiera modificarlo por SFTP y que un usuario ajeno no pudiera escribir.
+
+La comprobación posterior utilizó \texttt{stat -c '\%U \%G \%a \%n'} sobre la raíz, un archivo y un directorio. La prueba negativa intentó crear un archivo como \texttt{wpviewer} y obtuvo \textit{Permission denied}. Así, la gestión de permisos se relaciona directamente con el objetivo de comprender propietario, grupo y otros, y no se limita a describir valores sin probar su efecto.
+
 \begin{table}[H]
   \centering
   \begin{tabular}{llll}

@@ -31,29 +31,6 @@ La implementación técnica principal está terminada:
 - El certificado fue emitido por Let's Encrypt mediante DNS-01 y Route 53.
 - Las auditorías de cliente, web y DB finalizaron con cero fallos.
 
-### 1.1 Corrección obligatoria pendiente
-
-La evidencia `evidencias/04-wordpress-mysql/E14-wordpress-https.png` todavía muestra el título **“Laboratorio 5 - Grupo 1”**. Antes de entregar o volver a compilar el informe:
-
-1. Abrir el panel de administración de WordPress.
-2. Entrar a **Ajustes > Generales**.
-3. Cambiar el título del sitio a **Laboratorio 5 - Grupo 2**.
-4. Guardar los cambios.
-5. Abrir `https://laboratorio5.com` desde Firefox en openSUSE.
-6. Confirmar que se vea “Grupo 2”, la URL completa y el indicador de conexión segura.
-7. Reemplazar exactamente `evidencias/04-wordpress-mysql/E14-wordpress-https.png`.
-8. Recompilar el informe desde Windows:
-
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File .\scripts\compilar-informe.ps1
-   ```
-
-9. Abrir el PDF y confirmar que la nueva captura aparece tanto en el informe como en la presentación HTML.
-
-Esta corrección es de coherencia documental; no implica reinstalar WordPress ni modificar la arquitectura.
-
----
-
 ## 2. Objetivo de la demostración
 
 Al finalizar, el docente debe haber visto en vivo que:
@@ -277,7 +254,7 @@ Abrir `presentacion/index.html` o servirla desde Windows:
 node .\scripts\servir-presentacion.mjs
 ```
 
-Comprobar navegación, pantalla completa, imágenes y la captura corregida de “Grupo 2”. La presentación puede mostrarse desde la laptop, pero las acciones técnicas deben originarse en openSUSE.
+Comprobar navegación, pantalla completa e imágenes. La presentación puede mostrarse desde la laptop, pero las acciones técnicas deben originarse en openSUSE.
 
 ---
 
@@ -799,7 +776,7 @@ Si algo falla: leer el error, identificar la capa, ejecutar una prueba pequeña 
 
 ## 21. Checklist de cinco minutos antes
 
-- [ ] La captura y el sitio dicen “Grupo 2”.
+- [ ] El sitio responde por HTTPS y no hay información sensible visible.
 - [ ] Torre, router y laptop tienen alimentación.
 - [ ] Proxmox y las tres VM están activos.
 - [ ] openSUSE conserva `10.50.5.10`.
@@ -830,7 +807,7 @@ Si algo falla: leer el error, identificar la capa, ejecutar una prueba pequeña 
 
 ## 23. Criterio final de “listo para presentar”
 
-1. La captura E14 y el sitio muestran “Grupo 2”.
+1. El sitio responde por HTTPS y la evidencia utilizada no revela información sensible.
 2. Las tres auditorías terminan con cero fallos.
 3. Los pasos 3 al 26 pueden repetirse desde openSUSE.
 4. El informe fue recompilado después de la última evidencia.

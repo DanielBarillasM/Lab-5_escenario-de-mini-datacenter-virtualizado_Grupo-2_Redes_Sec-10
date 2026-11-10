@@ -49,7 +49,6 @@ La infraestructura fue implementada sobre hardware físico y las pruebas princip
 
 ## Control pendiente antes de entregar
 
-- [ ] Confirmar que el título visible de WordPress diga “Grupo 2”.
 - [ ] Ensayar la exposición completa con cronómetro.
 - [ ] Ejecutar la auditoría final del repositorio y revisar el último commit.
 - [ ] Verificar que ninguna captura nueva muestre credenciales.

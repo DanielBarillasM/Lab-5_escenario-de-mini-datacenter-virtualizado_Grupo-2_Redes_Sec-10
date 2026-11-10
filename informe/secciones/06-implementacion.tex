@@ -1,5 +1,31 @@
 \section{Procedimiento de implementación}
 
+\subsection{Criterio aplicado en cada etapa}
+
+Cada etapa se documentó con el mismo criterio: qué se hizo, por qué se eligió, qué resultado se esperaba, cómo se verificó y con qué objetivo se relaciona. La Tabla~\ref{tab:trazabilidad-etapas} resume esa trazabilidad antes de presentar el detalle y las evidencias.
+
+\small
+\begin{longtable}{p{0.13\linewidth}p{0.25\linewidth}p{0.22\linewidth}p{0.28\linewidth}}
+\caption{Trazabilidad entre decisiones, resultados esperados, pruebas y objetivos.}\label{tab:trazabilidad-etapas}\\
+\toprule
+\textbf{Etapa} & \textbf{Qué se hizo y por qué} & \textbf{Resultado esperado} & \textbf{Verificación y relación con objetivos} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Etapa} & \textbf{Qué se hizo y por qué} & \textbf{Resultado esperado} & \textbf{Verificación y relación con objetivos} \\
+\midrule
+\endhead
+Hipervisor & Proxmox se instaló directamente en la torre para obtener un hipervisor Tipo 1 y evitar virtualización anidada. & Tres VM simultáneas sobre el hardware físico. & \texttt{pveversion}, recursos del host y panel de VM; cumple el objetivo de virtualización y la opción extra. \\
+Sistemas & Ubuntu Server 26.04.1 se instaló sin GUI en web y DB; openSUSE se eligió como cliente gráfico distinto de Ubuntu. & Dos servidores de texto y una estación gráfica de administración. & \texttt{/etc/os-release}, \texttt{systemctl get-default} y KDE; cumple el requisito de SO y cliente. \\
+Red y SSH & Se usó \texttt{vmbr1}, direccionamiento estático y SSH 22222 con llaves para administrar sin consola local. & Conectividad reproducible y acceso remoto cifrado a ambas VM. & Ping, \texttt{ss}, sesiones SSH desde \texttt{10.50.5.10} y puerto 22 cerrado; cumple gestión remota. \\
+Base de datos & MySQL se separó en \texttt{lab5-db}, se ligó a \texttt{10.50.5.30:13306} y se limitó \texttt{wpapp} a la VM web. & WordPress accede a su DB; el cliente no puede hacerlo directamente. & Consulta positiva desde web, \texttt{SHOW GRANTS} y \texttt{nc} negativo desde openSUSE; cumple dos capas y mínimo privilegio. \\
+Web y TLS & Apache, PHP y WordPress se instalaron en web; DNS-01 se eligió porque la IP del servicio es privada. & Sitio por nombre, redirección HTTP y certificado público válido. & \texttt{getent}, respuestas 301/200 y certificado Let's Encrypt; cumple resolución local y HTTPS. \\
+SFTP y permisos & \texttt{wpadmin:www-data}, modos 750/640 y SFTP permiten administrar contenido sin conceder escritura general. & \texttt{wpadmin} modifica; usuarios no autorizados fallan; Apache conserva lectura. & FileZilla, \texttt{stat} y prueba negativa con \texttt{wpviewer}; cumple \texttt{chown}, \texttt{chmod} y restricción. \\
+Firewall & UFW aplica denegación entrante y reglas por IP porque cada capa necesita flujos diferentes. & Solo permanecen accesibles los puertos y orígenes diseñados. & \texttt{ufw status verbose}, puertos en escucha y pruebas positivas/negativas; cumple seguridad de red. \\
+\bottomrule
+\end{longtable}
+\normalsize
+
 \subsection{Creación y preparación de las VM}
 
 En Proxmox se crearon manualmente las VM 101, 102 y 103. Las dos VM servidoras recibieron Ubuntu Server 26.04.1 LTS y se fijó \texttt{multi-user.target}; el cliente recibió openSUSE Leap 16.0 y KDE. Los servidores se administran mediante cuentas sin privilegios directos y \texttt{sudo} solo cuando una tarea lo exige.
@@ -46,4 +72,6 @@ mysqlx = OFF
 
 WordPress se instaló en \texttt{/var/www/wordpress}. \texttt{wp-config.php} apunta a \texttt{10.50.5.30:13306} y fija \texttt{WP\_HOME} y \texttt{WP\_SITEURL} en \url{https://laboratorio5.com}. Apache usa un VirtualHost en 80 que redirige permanentemente a HTTPS y otro en 443 con el certificado de Let's Encrypt. Antes de cada recarga se ejecutó \texttt{apache2ctl configtest}.
 
-\evidencia{WordPress operativo mediante HTTPS}{04-wordpress-mysql/E14-wordpress-https.png}{Firefox carga el sitio desde \texttt{laboratorio5.com} con indicador de conexión segura. La página prueba la integración Apache--PHP--WordPress--MySQL desde la VM cliente.}
+El funcionamiento final no depende de una captura que muestre el panel administrativo o información sensible. Se demuestra mediante tres pruebas independientes incluidas en el informe: la consulta positiva de la VM web hacia MySQL, la respuesta HTTPS 200 obtenida desde openSUSE y el certificado válido para \texttt{laboratorio5.com}. En conjunto verifican Apache--PHP--WordPress--MySQL sin revelar contraseñas, llaves ni credenciales.
+
+\resultado{WordPress respondió con código 200 por HTTPS, la VM web consultó la base remota \texttt{wordpress} en \texttt{10.50.5.30:13306} y el certificado presentado perteneció a \texttt{laboratorio5.com}.}

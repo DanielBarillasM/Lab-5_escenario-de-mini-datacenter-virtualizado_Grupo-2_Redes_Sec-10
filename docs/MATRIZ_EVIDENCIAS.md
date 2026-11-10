@@ -17,7 +17,7 @@ Todas las pruebas principales fueron ejecutadas sobre la infraestructura real. L
 | T11 | MySQL desde web | `04-wordpress-mysql/E09-mysql-remoto.png` | Aprobada | Conexión positiva por 13306 |
 | T12 | MySQL bloqueado desde cliente | `05-seguridad/E09b-mysql-bloqueado.png` | Aprobada | Prueba negativa correcta |
 | T13 | Privilegios de `wpapp` | `04-wordpress-mysql/E09c-show-grants.png` | Aprobada | Limitado a `wordpress.*` |
-| T14 | WordPress en dos capas | `04-wordpress-mysql/E14-wordpress-https.png` | Aprobada | Sitio HTTPS operativo |
+| T14 | WordPress en dos capas | `04-wordpress-mysql/E09-mysql-remoto.png`, `02-cliente/E16-hosts-resolucion-local.png` | Aprobada | DB remota operativa y HTTPS 200 sin exponer información sensible |
 | T15 | FileZilla por SFTP | `05-seguridad/E12-filezilla-sftp.png` | Aprobada | `wpadmin` accede por 22222 |
 | T16 | Permiso denegado | `05-seguridad/E13-permiso-denegado.png` | Aprobada | Usuario no autorizado bloqueado |
 | T17 | Certificado Let's Encrypt | `05-seguridad/E15-certificado-letsencrypt.png` | Aprobada | CN/SAN, emisor y vigencia válidos |

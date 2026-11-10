@@ -4,16 +4,44 @@
 \toprule
 \textbf{Componente} & \textbf{Elección final} & \textbf{Justificación} \\
 \midrule
-Hipervisor & Proxmox VE 9.2 & Hipervisor Tipo 1 con administración web y soporte KVM/QEMU. \\
-Cliente & openSUSE Leap 16.0 KDE & Distribución distinta de Ubuntu con navegador, terminal y FileZilla. \\
+Hipervisor & Proxmox VE 9.2.2; kernel 7.0.2-6-pve & Hipervisor Tipo 1 con administración web y soporte KVM/QEMU. \\
+Cliente & openSUSE Leap 16.0; KDE Plasma 6.4.2 & Distribución distinta de Ubuntu con navegador, terminal y FileZilla. \\
 Servidores & Ubuntu Server 26.04.1 LTS & Versión exigida; \texttt{multi-user.target} evita entorno gráfico. \\
-Web & Apache 2.4, PHP y WordPress & Plataforma soportada por WordPress y configurable mediante VirtualHosts. \\
-Base de datos & MySQL, puerto 13306 & Separa persistencia de la capa web y evita el puerto predeterminado. \\
+Web & Apache 2.4.66, PHP 8.5.4 y WordPress 7.1.4 & Versiones estables de Ubuntu 26.04 y WordPress disponibles al instalar; VirtualHosts separan HTTP y HTTPS \cite{ubuntu-apache,ubuntu-php,wordpress-releases}. \\
+Base de datos & MySQL 8.4.11, puerto 13306 & Versión LTS distribuida para Ubuntu 26.04; separa persistencia y evita el puerto predeterminado \cite{ubuntu-mysql}. \\
 DNS & Amazon Route 53 & Zona pública autoritativa para \texttt{laboratorio5.com}. \\
 Certificado & Let's Encrypt, DNS-01 & Valida el dominio sin publicar la IP privada del servidor \cite{letsencrypt-challenges}. \\
 Firewall & UFW & Reglas simples, auditables y restringidas por IP origen. \\
 \bottomrule
 \end{tabularx}
+
+\subsection{Registro y comprobación de versiones}
+
+Las versiones se registraron desde los sistemas instalados y se contrastaron con las fuentes oficiales de los paquetes y de WordPress. No se dedujeron a partir del nombre de una ISO. Los comandos de comprobación se muestran para que el registro sea reproducible.
+
+\begin{lstlisting}[caption={Comandos utilizados para comprobar versiones.}]
+# Host Proxmox
+pveversion
+uname -r
+
+# Cliente openSUSE
+cat /etc/os-release
+plasmashell --version
+
+# Servidor web
+cat /etc/os-release
+apache2 -v
+php -v
+php -r 'include "/var/www/wordpress/wp-includes/version.php";
+echo $wp_version, PHP_EOL;'
+
+# Servidor DB
+cat /etc/os-release
+mysql --version
+sudo mysql -NBe 'SELECT VERSION();'
+\end{lstlisting}
+
+El resultado consolidado fue: Proxmox VE 9.2.2 con kernel 7.0.2-6-pve; openSUSE Leap 16.0 con KDE Plasma 6.4.2; Ubuntu Server 26.04.1 LTS en ambos servidores; Apache 2.4.66; PHP 8.5.4; WordPress 7.1.4; y MySQL 8.4.11. Las revisiones de paquete de Ubuntu pueden cambiar con actualizaciones de seguridad, por lo que el informe conserva la versión funcional relevante y no depende del sufijo de empaquetado.
 
 \subsection{Principios aplicados}
 
